@@ -4,21 +4,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faSearch , faEdit, faLocationDot, faDollarSign} from '@fortawesome/free-solid-svg-icons';
 
 
-const PendingTask = ({navigation}) => {
+const BidsFeed = ({navigation}) => {
     return(
         <View style={{borderWidth:1,padding:15, borderRadius:4, marginTop:20, borderColor:'#E4E4E4',}}>
             <View style={{flexDirection:'row',  }}>
                 
                 <View style={{flexDirection:'row', gap:10,}}>
                     <Text style={styles.taskTitle}>Laundry</Text>
-                    <TouchableOpacity  onPress={()=>navigation.navigate('EditableForm')}>
-
-                    <FontAwesomeIcon icon={faEdit} size={18}/>
-                    </TouchableOpacity>
+                    
                 </View>
                 <TouchableOpacity>
 
-                    <Text style={{fontSize:10, fontWeight:'400', color:'#C11414', alignSelf:'center', marginLeft:165,}}>Cancel Task</Text>
+                    <Text style={{fontSize:10, fontWeight:'400', color:'#C11414', alignSelf:'center', marginLeft:165,}}>Withdraw Bid</Text>
                 </TouchableOpacity>
 
             </View>
@@ -33,10 +30,13 @@ const PendingTask = ({navigation}) => {
                 <Text style={styles.paymentText}>Wallet</Text>
             </View>
             </View>
+            <View style={{flexDirection:'row', gap:50,}}>
             <Text style={styles.budgetText}>Budget: N6,000</Text>
-            <TouchableOpacity  style={styles.ViewBidButton} onPress={()=>navigation.navigate('Bids')}>
-                    <Text style={styles.ViewBidText}>View Bids</Text>
-                </TouchableOpacity>
+            <Text style={styles.budgetText}>Bid: N7,000</Text>
+
+            </View>
+            
+            
         </View>
     )
 };
@@ -95,4 +95,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default PendingTask;
+export default BidsFeed;

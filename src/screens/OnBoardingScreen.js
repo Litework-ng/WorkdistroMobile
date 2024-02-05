@@ -1,6 +1,6 @@
 // OnboardingScreen.js
 import React from 'react';
-import { View, Text, StyleSheet} from 'react-native';
+import { View, Text, StyleSheet, ScrollView} from 'react-native';
 import OnboardingSlides from './OnBoardingSlides';
 
 const OnboardingScreen = ({navigation}) => {

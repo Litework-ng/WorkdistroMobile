@@ -1,20 +1,21 @@
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
-import PendingTask from '../components/PendingTask';
-import InProgressTask from '../components/InProgressTask';
 import CompletedTask from '../components/CompletedTask';
+import BidsFeed from '../components/BidsFeed';
+import InProgressTaskWorker from '../components/InProgressTaskWorker';
+import CompletedTaskWorker from '../components/CompletedTaskWorker';
 
-const TaskScreenDemo = ({navigation}) => {
+const WorkerTaskScreen = ({navigation}) => {
   const [index, setIndex] = useState(0);
   const [routes] = useState([
-    { key: 'pending', title: 'Pending' },
+    { key: 'bids', title: 'Bids' },
     { key: 'inProgress', title: 'In-Progress' },
     { key: 'completed', title: 'Completed' },
   ]);
 
   const renderScene = SceneMap({
-    pending: () => <PendingTabContent navigation={navigation} />,
+    bids: () => <BidTabContent navigation={navigation} />,
     inProgress: () => <InProgressTabContent navigation={navigation} />,
     completed: () => <CompletedTabContent  navigation={navigation}/>,
   });
@@ -46,25 +47,16 @@ const TaskScreenDemo = ({navigation}) => {
   );
 };
 
-const TaskTabContent = ({ tab }) => {
-  // Customize the content based on the selected tab (pending or completed)
-  // You can use your TaskItem component here to render individual tasks
-  return (
-    <View style={styles.tabContent}>
-      <Text>{`${tab} tasks content`}</Text>
-    </View>
-  );
-};
 
 
-const PendingTabContent = ({ navigation }) => {
+const BidTabContent = ({ navigation }) => {
     // Customize the content based on the selected tab (pending or completed)
     // You can use your TaskItem component here to render individual tasks
     return (
       <ScrollView style={styles.tabContent}>
         <View style={{paddingBottom:100,}}>
-        <PendingTask navigation={navigation}/>
-        <PendingTask  navigation={navigation}/>
+        <BidsFeed navigation={navigation}/>
+        <BidsFeed  navigation={navigation}/>
         </View>
       </ScrollView>
     );
@@ -76,7 +68,8 @@ const PendingTabContent = ({ navigation }) => {
     return (
       <ScrollView style={styles.tabContent}>
         <View style={{paddingBottom:100,}}>
-        <InProgressTask navigation={navigation}/>
+        <InProgressTaskWorker navigation={navigation}/>
+        <InProgressTaskWorker navigation={navigation}/>
        
         </View>
       </ScrollView>
@@ -89,7 +82,7 @@ const PendingTabContent = ({ navigation }) => {
     return (
       <ScrollView style={styles.tabContent}>
         <View style={{paddingBottom:100,}}>
-        <CompletedTask navigation={navigation}/>
+        <CompletedTaskWorker navigation={navigation}/>
        
         </View>
       </ScrollView>
@@ -139,4 +132,4 @@ user:{
   },
 });
 
-export default TaskScreenDemo;
+export default WorkerTaskScreen;

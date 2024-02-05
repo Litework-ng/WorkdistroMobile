@@ -1,4 +1,3 @@
-// RegistrationScreen.js
 import React, {useState, useEffect} from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView, KeyboardAvoidingView, TouchableWithoutFeedback, } from 'react-native';
 import CheckBoxForm from 'react-native-checkbox-form';
@@ -6,23 +5,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import * as yup from 'yup';
 import { Formik } from 'formik';
-import { NavigationContainer } from '@react-navigation/native';
 
 
 
-const RegistrationScreen = ({navigation}) => {
+
+const LoginWorkerScreen = ({navigation}) => {
  
   const [errors, setErrors] = useState({
-    fullName: '',
     email: '',
-    phoneNumber: '',
     password: '',
   });
   const [active, setActive] = useState(false);
   const validationSchema = yup.object().shape({
-    fullName: yup.string().required('Full Name is required'),
+    
     email: yup.string().email('Invalid Email').required('Email is required'),
-    phoneNumber: yup.string().matches(/^\d{11}$/, 'Invalid Phone Number').required('Phone Number is required'),
     password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
   });
 
@@ -57,10 +53,11 @@ const RegistrationScreen = ({navigation}) => {
     }
   };
 
-  const handleSignUp = async (values) => {
+  const handleLogIn = async (values) => {
+    console.log('presss')
     try {
       await validationSchema.validate(values, { abortEarly: false });
-      navigation.navigate('OtpScreen');
+      navigation.navigate('HomeWorker');
       console.log('Sign up button pressed');
        
     } catch (error) {
@@ -85,25 +82,9 @@ const RegistrationScreen = ({navigation}) => {
       setShowPassword(!showPassword);
     };
   
-    const handleFocus = (inputName) => {
-      switch (inputName) {
-        case 'fullName':
-          setFullNameFocused(true);
-          console.log('focused')
-          break;
-        case 'email':
-          setEmailFocused(true);
-          break;
-        case 'phoneNumber':
-          setPhoneNumberFocused(true);
-          break;
-        case 'password':
-          setPasswordFocused(true);
-          break;
-        default:
-          break;
-      }
-    };
+   
+      
+    
     const handleInputFocus = (inputName) => {
       switch (inputName) {
         case 'fullName':
@@ -128,7 +109,7 @@ const RegistrationScreen = ({navigation}) => {
         case 'fullName':
           setFullNameFocused(false);
            validateField('fullName', values.fullname );
-          
+           console.log('checking')
           break;
         case 'email':
           setEmailFocused(false);
@@ -144,15 +125,12 @@ const RegistrationScreen = ({navigation}) => {
       }
     };
 
-    const navigateLogin = ()=>{
-      navigation.navigate('Login')
-    }
    
     
     const data = [
       {
-        label: 'By signing up you agree to our terms and conditions.',
-        value: 'terms',
+        label: 'Remember Pasword',
+        value: 'remember',
         RNchecked: termsChecked,
       },
     ];
@@ -175,11 +153,11 @@ const RegistrationScreen = ({navigation}) => {
 
     <View style={styles.container}>
       <Image source={require('../../assets/images/logo.png')} style={styles.logo} />
-      <Text style={styles.header}>Fill in your details</Text>
+      <Text style={styles.header}>Welcome Back, DistroWorker!</Text>
       <Formik
-            initialValues={{ fullName: '', email: '', phoneNumber: '', password: '' }}
+            initialValues={{  email: '',  password: '' }}
             validationSchema={validationSchema}
-            onSubmit={handleSignUp}
+            onSubmit={handleLogIn}
           >
             {({
               values,
@@ -194,25 +172,7 @@ const RegistrationScreen = ({navigation}) => {
             }) => (
               
               <View style={styles.form}>
-                <View style={styles.labelInputContainer}>
-                  <Text style={styles.label}>Full Name</Text>
-                  <TextInput
-                    style={[styles.input, fullNameFocused && styles.activeInput]}
-                    value={values.fullName}
-                    onChangeText={handleChange('fullName')}
-                    onFocus={() => {
-                      handleInputFocus('fullName');
-                      
-                    }}
-                    onBlur={() => {
-                      handleInputBlur('fullName', values); 
-                      handleBlur('fullName'); 
-                    }}
-                  />
-                  {touched.fullName && errors.fullName && (
-                    <Text style={styles.errorText}>{errors.fullName}</Text>
-                  )}
-                </View>
+               
 
                 <View style={styles.labelInputContainer}>
                   <Text style={styles.label}>Email</Text>
@@ -232,23 +192,7 @@ const RegistrationScreen = ({navigation}) => {
                   )}
                 </View>
 
-                <View style={styles.labelInputContainer}>
-                  <Text style={styles.label}>Phone Number</Text>
-                  <TextInput
-                    style={[styles.input, phoneNumberFocused && styles.activeInput]}
-                    value={values.phoneNumber}
-                    onChangeText={handleChange('phoneNumber')}
-                    onFocus={ ()=>{handleInputFocus('phoneNumber')}}
-                    onBlur={() => {
-                      handleInputBlur('phoneNumber', values);
-                      handleBlur('phoneNumber');
-                    }}
-                    keyboardType="phone-pad"
-                  />
-                  {touched.phoneNumber && errors.phoneNumber && (
-                    <Text style={styles.errorText}>{errors.phoneNumber}</Text>
-                  )}
-                </View>
+              
 
                 <View style={styles.labelInputContainer}>
                 <Text style={styles.labelPassword}>Password</Text>
@@ -279,46 +223,44 @@ const RegistrationScreen = ({navigation}) => {
                     <Text style={styles.errorTextPassword}>{errors.password}</Text>
                   )}
                 </View>
-                
+                <View style={styles.userAccessContaineer}>
+
                             <CheckBoxForm style={styles.checkboxContainer}
                             iconSize={12}
                             iconColor='#000'
-                            textStyle={{fontSize:12,}}
+                            textStyle={{fontSize:12, color:'#1F2A47'}}
                             onChecked={handleTermsCheck}
-                            disabled= 'true' 
                             itemCheckedKey='RNchecked'
                             
                     dataSource={data}
-                    d
                     renderItem={(item) => (
-                      <CheckBox
-                      
-                        label={item.label}
-                        
-                       
-                        
-                        
+                      <CheckBox 
+                      label={item.label}
                       />
 
                     )}
                   />
+                  <TouchableOpacity style={styles.forgotPasswordContainer} onPress={() => navigation.navigate('ForgotPwd')}>
+                    <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+                  </TouchableOpacity>
+                </View>
                 
 
                 <TouchableOpacity
                   style={[
                     styles.signUpButton,
-                    !isValid ||!termsChecked ? styles.disabledButton : null,
+                    !isValid  ? styles.disabledButton : null,
                   ]}
                   onPress={handleSubmit}
-                  disabled={!isValid || !termsChecked}
+                  disabled={!isValid }
                 >
-                  <Text style={styles.signUpButtonText}>Sign Up</Text>
+                  <Text style={styles.signUpButtonText}>Log In</Text>
                 </TouchableOpacity>
               </View>
             )}
           </Formik>
-      <TouchableOpacity style={styles.redirectText}  onPress={() => navigation.navigate('Login')}>
-        <Text>Already have an account? <Text style={styles.signupRedirect}>Login in</Text></Text>
+      <TouchableOpacity style={styles.redirectText}  onPress={() => navigation.navigate('SignUpWorker')}>
+        <Text>Don't have an account? <Text style={styles.signupRedirect}>Sign Up</Text></Text>
       </TouchableOpacity>
     </View>
    </ScrollView>
@@ -447,8 +389,17 @@ const styles = StyleSheet.create({
   signupRedirect:{
       color:'#1F2A47',
       fontWeight:700,
+  }, 
+  userAccessContaineer:{
+    flexDirection:'row',
+    gap: 70,
+    marginBottom:80,
+  }, 
+  forgotPasswordText:{
+    color:'#1F2A47',
+    fontSize:12,
   }
 
 });
 
-export default RegistrationScreen;
+export default LoginWorkerScreen;

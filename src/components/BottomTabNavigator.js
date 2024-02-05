@@ -1,75 +1,25 @@
+import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faHome, faTasks, faWallet, faBell, faUser,faBriefcase } from '@fortawesome/free-solid-svg-icons';
-import HomeScreen from '../screens/HomeScreen';
-import TaskScreen from '../screens/TaskScreen';
-import TaskScreenDemo from '../screens/TaskSCreenDemo';
-import WalletScreen from '../screens/WalletScreen';
-import NotificationsScreen from '../screens/NotificationsScreen';
-import ProfileScreen from '../screens/ProfileScreen';
+import ClientBottomTabs from './ClientBottomTabs'; // Import your client bottom tabs
+import WorkerBottomTabs from './WorkerBottomTabs'; // Import your worker bottom tabs
+import { useUserContext } from '../components/UserContext';
+import { HeaderTitle } from 'react-navigation-stack';
 
-const Tab = createBottomTabNavigator();
+const BottomNavigator = ({userSelection}) => {
+  const userRole = userSelection
+  const Tab = createBottomTabNavigator();
 
-
-
-
-const BottomTabNavigator = ({component, onpress}) => {
   return (
     <Tab.Navigator
-      screenOptions={{
-        tabBarActiveTintColor: '#1F2A47',
-        tabBarInactiveTintColor: 'gray',
-        showLabel: true,
-        headerShown:false,
-        tabBarStyle:{
-            paddingTop:19,
-            paddingBottom:19,
-            height:84,
-        },
-        labelStyle: {
-          fontSize: 12,
-        },
-      }}
-    >
-      <Tab.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{
-          tabBarIcon: ({ color }) => <FontAwesomeIcon icon={faHome} color={color} size={24} />,
-        }}
-        
-      />
-      <Tab.Screen
-        name="Task"
-        component={TaskScreenDemo}
-        options={{
-          tabBarIcon: ({ color }) => <FontAwesomeIcon icon={faBriefcase} color={color} size={24} />,
-        }}
-      />
-      <Tab.Screen
-        name="Wallet"
-        component={WalletScreen}
-        options={{
-          tabBarIcon: ({ color }) => <FontAwesomeIcon icon={faWallet} color={color} size={24} />,
-        }}
-      />
-      <Tab.Screen
-        name="Notifications"
-        component={NotificationsScreen}
-        options={{
-          tabBarIcon: ({ color }) => <FontAwesomeIcon icon={faBell} color={color} size={24} />,
-        }}
-      />
-      <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{
-          tabBarIcon: ({ color }) => <FontAwesomeIcon icon={faUser} color={color} size={24} />,
-        }}
-      />
+      screenOptions={{headerShown:false, tabBarLabel:'', tabBarStyle:{display:'none'},}}
+      >
+      {userRole === 'findWorker' ? (
+        <Tab.Screen name="ClientTabs" component={ClientBottomTabs}  />
+      ) : (
+        <Tab.Screen name="WorkerTabs" component={WorkerBottomTabs} />
+      )}
     </Tab.Navigator>
   );
 };
 
-export default BottomTabNavigator;
-
+export default BottomNavigator;
