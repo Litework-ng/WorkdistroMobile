@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faSearch , faEdit, faLocationDot, faDollarSign, faEllipsis} from '@fortawesome/free-solid-svg-icons';
+import { DollarSquare, Location } from 'iconsax-react-native';
 
 
 const MostRecentScreen = ({navigation}) => {
@@ -22,11 +23,11 @@ const MostRecentScreen = ({navigation}) => {
             <Text style={{fontSize:12, color:'#7E7E7E', width:303, height:36, marginTop:10,}}>Lorem ipsum dolor sit amet consectetur. Commodo fames viverra est eget nec feugiat augue semper dolor.</Text>
             <View style={styles.detailsContainer}>
                 <View style={styles.itemDetailsContainer}>
-                <FontAwesomeIcon icon={faLocationDot} size={16} color='#7E7E7E'/>
+                <Location size={16} color='#7E7E7E'/>
                 <Text style={styles.locationText}>Ikorodu, Lagos</Text>
             </View>
             <View style={styles.itemDetailsContainer}> 
-                <FontAwesomeIcon icon={faDollarSign} size={16} color='#7E7E7E'/>
+                <DollarSquare size={16} color='#7E7E7E'/>
                 <Text style={styles.paymentText}>Wallet</Text>
             </View>
             </View>
@@ -49,11 +50,13 @@ const styles = StyleSheet.create({
         marginTop:5,
         padding:0,
         
+        
     },
     itemDetailsContainer:{
         flexDirection:'row',
         alignSelf:'center',
         justifyContent:'center',
+        gap:2,
     }, 
     paymentText:{
         fontSize:12,

@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import * as yup from 'yup';
 import { Formik } from 'formik';
-import { NavigationContainer } from '@react-navigation/native';
+import {Eye, EyeSlash } from 'iconsax-react-native';
 
 
 
@@ -267,11 +267,7 @@ const RegistrationScreenWorker = ({navigation}) => {
                         secureTextEntry={!showPassword}
                       />
                       <TouchableOpacity style={styles.showPasswordButton} onPress={toggleShowPassword}>
-                      <FontAwesomeIcon
-                        icon={showPassword ? faEye : faEyeSlash}
-                        size={20}
-                        color="gray"
-                      />
+                      {showPassword ? <Eye size={20}  color='black'/> : <EyeSlash size={20} color='gray'/>}
                       </TouchableOpacity>
                     </View>
                   </TouchableWithoutFeedback>
@@ -376,6 +372,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     paddingLeft: 10,
     color:'#1A1A1A',
+    borderRadius:4,
   },
   signUpButton: {
     backgroundColor: '#1F2A47',

@@ -12,6 +12,7 @@ import ProfileWorkerScreen from '../screens/ProfileWorkerScreen';
 import WorkerTaskScreen from '../screens/WorkerTaskScreen';
 import HomeScreenWorker from '../screens/HomeScreenWorker';
 import WalletWorkerScreen from '../screens/WalletWorkerScreen'
+import { Briefcase, Home, User, Wallet, Notification } from 'iconsax-react-native';
 
 const Tab = createBottomTabNavigator();
 
@@ -40,7 +41,7 @@ const WorkerBottomTabs = ({component, onpress}) => {
         name="Home"
         component={HomeScreenWorker}
         options={{
-          tabBarIcon: ({ color }) => <FontAwesomeIcon icon={faHome} color={color} size={24} />,
+          tabBarIcon: ({ color }) => <Home  color={color} size={24} />,
         }}
         
       />
@@ -48,28 +49,28 @@ const WorkerBottomTabs = ({component, onpress}) => {
         name="Task"
         component={WorkerTaskScreen}
         options={{
-          tabBarIcon: ({ color }) => <FontAwesomeIcon icon={faBriefcase} color={color} size={24} />,
+          tabBarIcon: ({ color }) => <Briefcase  color={color} size={24} />,
         }}
       />
       <Tab.Screen
         name="Wallet"
         component={WalletWorkerScreen}
         options={{
-          tabBarIcon: ({ color }) => <FontAwesomeIcon icon={faWallet} color={color} size={24} />,
+          tabBarIcon: ({ color }) => <Wallet color={color} size={24} />,
         }}
       />
       <Tab.Screen
         name="Notifications"
         component={NotificationWorkerScreen}
         options={{
-          tabBarIcon: ({ color }) => <FontAwesomeIcon icon={faBell} color={color} size={24} />,
+          tabBarIcon: ({ color }) => <Notification color={color} size={24} />,
         }}
       />
       <Tab.Screen
         name="Profile"
         component={ProfileWorkerScreen}
         options={{
-          tabBarIcon: ({ color }) => <FontAwesomeIcon icon={faUser} color={color} size={24} />,
+          tabBarIcon: ({ color }) => <User color={color} size={24} />,
         }}
       />
     </Tab.Navigator>

@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { faEye, faChevronLeft, faFileArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import {DocumentUpload } from 'iconsax-react-native';
 
 const UploadPhotoInput = ({ label }) => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -13,24 +14,23 @@ const UploadPhotoInput = ({ label }) => {
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
+      base64: true,
     });
 
-    if (!result.cancelled) {
-      setSelectedImage(result.uri);
-      console.log('press on')
+    if (!result.canceled) {
+      setSelectedImage (result.assets[0].uri);
+      console.log('Selected Image URI:', result.assets[0].uri)
     }
   };
 
   return (
     <View style={styles.ImageInputContainer}>
       <Text style={styles.ImgageInputLabel}>{label}</Text>
-      <TouchableOpacity onPress={pickImage} style={{ marginVertical: 10, alignSelf:'center', }}>
-      <FontAwesomeIcon icon={faFileArrowUp} size={32} style={{alignSelf:'center', marginTop:10,}} color='#787878'/>
+      <TouchableOpacity onPress={pickImage} style={{ marginVertical: 10, alignSelf:'center', }} accessibilityLabel="Choose a photo">
+      <DocumentUpload size={32} style={{alignSelf:'center', marginTop:10,}} color='#787878'/>
         <Text style={{color:'#787878', marginBottom:34,}}>Choose a photo</Text>
       </TouchableOpacity>
-      {selectedImage && (
-        <Image source={{ uri: selectedImage }} style={{ width: 200, height: 200 }} />
-      )}
+     
     </View>
   );
 };

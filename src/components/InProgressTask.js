@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { AirbnbRating } from 'react-native-ratings';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faSearch , faEdit, faLocationDot, faDollarSign} from '@fortawesome/free-solid-svg-icons';
+import {Location, DollarSquare} from 'iconsax-react-native';
 
 const InProgressTask = ({navigation}) => {
     const [rating, setRating] = useState(0);
@@ -17,7 +18,7 @@ const InProgressTask = ({navigation}) => {
             
             <View style={{flexDirection:'row', gap:10,}}>
                 <Text style={styles.taskTitle}>Laundry</Text>
-                <FontAwesomeIcon icon={faEdit} size={18}/>
+                
             </View>
             <TouchableOpacity>
 
@@ -28,11 +29,11 @@ const InProgressTask = ({navigation}) => {
         <Text style={{fontSize:12, color:'#7E7E7E', width:303, height:36, marginTop:10,}}>Lorem ipsum dolor sit amet consectetur. Commodo fames viverra est eget nec feugiat augue semper dolor.</Text>
         <View style={styles.detailsContainer}>
             <View style={styles.itemDetailsContainer}>
-            <FontAwesomeIcon icon={faLocationDot} size={16} color='#7E7E7E'/>
+            <Location size={16} color='#7E7E7E'/>
             <Text style={styles.locationText}>Ikorodu, Lagos</Text>
         </View>
         <View style={styles.itemDetailsContainer}> 
-            <FontAwesomeIcon icon={faDollarSign} size={16} color='#7E7E7E'/>
+            <DollarSquare size={16} color='#7E7E7E'/>
             <Text style={styles.paymentText}>Wallet</Text>
         </View>
         </View>
@@ -77,6 +78,7 @@ const styles = StyleSheet.create({
         flexDirection:'row',
         alignSelf:'center',
         justifyContent:'center',
+        gap:2,
     }, 
     paymentText:{
         fontSize:12,

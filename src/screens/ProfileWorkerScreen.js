@@ -1,13 +1,15 @@
 import { View, Text, ScrollView, TouchableOpacity,Image } from "react-native"
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faChevronRight, faFillDrip, faKey, faUser, faMessage, faLock, faCircleInfo, faComments, faSignOut } from '@fortawesome/free-solid-svg-icons';
+import {Eye, EyeSlash, InfoCircle, Key, Lock1, Logout, MessageQuestion, Messages2, User } from 'iconsax-react-native';
 
-const MenuItems =({icon, text, size, onPress})=>{
+const MenuItems =({ text, saxIcon, onPress, })=>{
     return(
         <TouchableOpacity onPress={onPress} style={{flexDirection:'row', alignItems:'center', justifyContent:'space-between', marginTop:22,}}>
         <View style={{flexDirection:'row',  alignItems:'center', gap:15,}}>
-            <FontAwesomeIcon icon={icon} size={size}/>
-            <Text style={{fontSize:14, fontWeight:'400',}} >{text}</Text>
+        {saxIcon } 
+           
+            <Text style={{fontSize:14, fontWeight:'400',}}  >{text}</Text>
         </View>
         <FontAwesomeIcon icon={faChevronRight} size={24}/>
          </TouchableOpacity>
@@ -29,18 +31,19 @@ const ProfileWorkerScreen = ({navigation}) => {
         </View>
         <View style={{marginBottom:50,}}>
 
-        <MenuItems text='Account Settings' size={20} icon={faUser} onPress={()=>navigation.navigate('AccountSetting')}/>
+      
+        <MenuItems saxIcon={<User size={20} color="black"/>}text='Account Settings'  onPress={()=>navigation.navigate('AccountSetting')}/>
         <Text style={{marginTop:22, fontSize:10, fontWeight:'600', color:'#7B7B7B', marginBottom:14,}}>Preferences</Text>
-        <MenuItems text='Theme' size={20} icon={faFillDrip}/>
-        <MenuItems text='Security' size={20} icon={faKey}/>
-        <Text style={{marginTop:22, fontSize:10, fontWeight:'600', color:'#7B7B7B', marginBottom:14,}}>Reesources</Text>
-        <MenuItems text='FAQ' size={20} icon={faMessage}/>
-        <MenuItems text='Support' size={20} icon={faComments}/>
-        <MenuItems text='Privacy' size={20} icon={faLock}/>
-        <MenuItems text='About Us' size={20} icon={faCircleInfo}/>
+        
+        <MenuItems  saxIcon={<Key size={20} color="black"/>} text='Security' size={20}  />
+        <Text style={{marginTop:22, fontSize:10, fontWeight:'600', color:'#7B7B7B', marginBottom:14,}}>Resources</Text>
+        <MenuItems text='FAQ' saxIcon={<MessageQuestion size={20} color="black"/>}  onPress={()=>navigation.navigate('Faq')}/>
+        <MenuItems text='Support'  saxIcon={<Messages2 size={20} color="black"/>} onPress={()=>navigation.navigate('Support')}/>
+        <MenuItems text='Privacy' saxIcon={<Lock1 size={20} color="black"/>} onPress={()=>navigation.navigate('Privacy')}/>
+        <MenuItems text='About Us' saxIcon={<InfoCircle size={20} color="black"/>} onPress={()=>navigation.navigate('AboutUs')}/>
         <TouchableOpacity style={{flexDirection:'row', alignItems:'center', justifyContent:'space-between', marginTop:22,}}>
         <View style={{flexDirection:'row',  alignItems:'center', gap:15,}}>
-            <FontAwesomeIcon icon={faSignOut} size={20} color="#C11414"/>
+            <Logout size={20} color="#C11414"/>
             <Text style={{fontSize:14, fontWeight:'400', color:'#C11414'}} >Sign Out</Text>
         </View>
         

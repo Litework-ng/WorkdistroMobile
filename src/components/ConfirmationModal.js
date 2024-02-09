@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import Modal from 'react-native-modal';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faClose} from '@fortawesome/free-solid-svg-icons';
+import {Close } from 'iconsax-react-native';
 
 const ConfirmationModal = ({ isVisible, onConfirm, onCancel }) => {
   return (

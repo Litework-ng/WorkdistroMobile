@@ -5,11 +5,17 @@ import { faCamera, faChevronLeft, } from '@fortawesome/free-solid-svg-icons';
 import Button from '../components/Button';
 
 const EditProfile = ({navigation}) => {
-    const [profileName, setProfileName] = useState('');
-   
+    const [profileName, setProfileName] = useState('Ife Adeniyi');
+    const [phoneNumber, setPhoneNumber] = useState('09097727720')
     const [email, setEmail] = useState('ifelere@gmail.com')
     const handleProfileNameChange = (value) => {
         setProfileName(value);
+      };
+      const handlePhoneNumberChange = (value) => {
+        setPhoneNumber(value);
+      };
+      const handleEmailChange = (value) => {
+        setEmail(value);
       };
      
     return(
@@ -31,7 +37,7 @@ const EditProfile = ({navigation}) => {
                     <Text style={styles.profileInputLabel}>Profile Name</Text>
                     <TextInput
                         style={{  borderColor: 'gray', borderWidth: 1,borderRadius:4, borderColor:'#6B6B6B', marginBottom: 20, width:335, height:50, paddingHorizontal:20,}}
-                        
+                        editable={true}
                         value={profileName}
                         onChangeText={handleProfileNameChange}
                     />
@@ -40,15 +46,17 @@ const EditProfile = ({navigation}) => {
                         <TextInput
                         style={styles.emailInput}
                         value={email}
-                                    
+                        editable={false}
+                        onChangeText={handleEmailChange}
                         />
                     </View>
                     <Text style={styles.profileInputLabel}>Phone Number</Text>
                     <TextInput
                         style={{  borderColor: 'gray', borderWidth: 1,borderRadius:4, borderColor:'#6B6B6B', marginBottom: 30, width:335, height:50, paddingHorizontal:20,}}
                         keyboardType="phone-pad"
-                        value={profileName}
-                        onChangeText={handleProfileNameChange}
+                        value={phoneNumber}
+                        editable={false}
+                        onChangeText={handlePhoneNumberChange}
                     />
                 <Button text='Save Changes'/>
              </View>

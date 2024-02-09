@@ -4,6 +4,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, ScrollView, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import {SearchNormal1 } from 'iconsax-react-native';
 
 const HomeScreen = ({ navigation }) => {
 
@@ -41,7 +42,7 @@ const HomeScreen = ({ navigation }) => {
                     handleSearchBlur()
                   }}
             />
-            <FontAwesomeIcon icon={faSearch} size={24} color="#292D32" style={styles.searchIcon} />
+            <SearchNormal1 size={24} color="#292D32" style={styles.searchIcon} />
             </View> 
                     <View style={styles.servicesContainer}>
                         <View style={styles.ManaulRequestcontainer}>
@@ -64,7 +65,7 @@ const HomeScreen = ({ navigation }) => {
                 />
 
             <ServiceItem
-                label="Service 1"
+                label="service !"
                 image={require('../../assets/images/services.png')}
                 onPress={() => handleServicePress('Service 1')}
                 /> 

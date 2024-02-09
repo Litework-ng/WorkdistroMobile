@@ -4,6 +4,7 @@ import { AirbnbRating } from 'react-native-ratings';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import {  faChevronLeft, faBriefcase} from '@fortawesome/free-solid-svg-icons';
 import Reviews from '../components/Reviews';
+import { Briefcase } from 'iconsax-react-native';
 
 
 const ViewProfile = ({navigation}) => {
@@ -41,7 +42,7 @@ const ViewProfile = ({navigation}) => {
                     </View>
                       <View style={{flexDirection:'row', gap:32}}>
                         <View style={{flexDirection:'row', alignContent:'center', gap:5,}} >
-                            <FontAwesomeIcon icon={faBriefcase} size={14} style={{marginTop:2,}} color='#000' />
+                            <Briefcase size={14} style={{marginTop:2,}} color='#000' />
                             <Text style={{fontSize:14, fontWeight:'400', color:'#000',}}>20 jobs completed</Text>
                         </View>
                        

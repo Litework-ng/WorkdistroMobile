@@ -4,6 +4,7 @@ import { Formik } from 'formik';
 import * as yup from 'yup';
 import {  faChevronLeft, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import {Eye, EyeSlash } from 'iconsax-react-native';
 
 const validationSchema = yup.object().shape({
   code: yup.string().required('Verification code is required'),
@@ -76,7 +77,7 @@ const ResetPassword = () => {
             />
              <TouchableOpacity style={styles.showPasswordButton} onPress={toggleShowPassword}>
                       <FontAwesomeIcon
-                        icon={showPassword ? faEye : faEyeSlash}
+                        icon={showPassword ? Eye : EyeSlash}
                         size={20}
                         color="gray"
                       />
@@ -95,7 +96,7 @@ const ResetPassword = () => {
             />
              <TouchableOpacity style={styles.showPasswordButton} onPress={toggleShowPassword}>
                       <FontAwesomeIcon
-                        icon={showPassword ? faEye : faEyeSlash}
+                        icon={showPassword ? Eye : EyeSlash}
                         size={20}
                         color="gray"
                       />

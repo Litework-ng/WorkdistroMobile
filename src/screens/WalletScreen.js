@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Image } from "react-native"
+import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native"
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faEye, faEyeSlash} from '@fortawesome/free-solid-svg-icons';
-
+import {Eye, EyeSlash } from 'iconsax-react-native';
 
 
 const TransactionFeedPlus = ({payer, time, amount}) => {
@@ -50,7 +50,7 @@ const WalletScreen = ({navigation}) => {
                     <View style={{flexDirection:'row', marginTop:12, marginBottom:5, alignItems:'center', gap:8,}}>
                         <Text style={{fontSize:14, fontWeight:'400',}}>Total Balance</Text>
                         <TouchableOpacity onPress={toggleBalance}>
-                        <FontAwesomeIcon icon={showBalance ? faEye : faEyeSlash} size={14} color="#000" />
+                        {showBalance ? <Eye size={16}  color='black'/> : <EyeSlash size={16} color='black'/>} 
                         </TouchableOpacity>
                     
                     </View>
@@ -75,12 +75,15 @@ const WalletScreen = ({navigation}) => {
 
             </View>
             <Text style={{ fontSize:14, fontWeight:500, marginTop:26,  paddingLeft:20,}}>All Transactions</Text>
+            <ScrollView>
+
             <Text style={{backgroundColor:'#EDF2FF', paddingVertical:2, paddingLeft:20,fontSize:12, fontWeight:'400', color:'#9B9B9B', marginTop:13,marginBottom:26,}}>20th May 2023</Text>
                 <TransactionFeedPlus payer='Monnify' time='7:45pm' amount='+N5000'/>
                 <TransactionFeedMinus payer='Tosin Alabi' time='7:45pm' amount='-N5000'/>
                 <Text style={{backgroundColor:'#EDF2FF', paddingVertical:2, paddingLeft:20,fontSize:12, fontWeight:'400', color:'#9B9B9B', marginTop:13,marginBottom:26,}}>19th May 2023</Text>
                 <TransactionFeedPlus payer='Monnify' time='7:45pm' amount='+N5000'/>
                 <TransactionFeedMinus payer='Tosin Alabi' time='7:45pm' amount='-N5000'/>
+            </ScrollView>
         </View>
     );
 };

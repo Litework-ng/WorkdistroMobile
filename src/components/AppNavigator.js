@@ -31,6 +31,10 @@ import JobDetailsScreen from '../screens/JobDetailsScreen';
 import WorkerTaskScreen from '../screens/WorkerTaskScreen';
 import LoginWorkerScreen from '../screens/LoginWorkerScreen';
 import UpdatedTask from '../screens/UpdateTask';
+import Faq from '../screens/Faq';
+import Support from '../screens/Support';
+import Privacy from '../screens/Privacy';
+import AboutUs from '../screens/AboutUs';
 import { useUserContext } from './UserContext';
 import BottomNavigator from './BottomTabNavigator';
 
@@ -74,7 +78,10 @@ const AppNavigator = () => {
       <Stack.Screen name= 'WorkerTask' component={WorkerTaskScreen}/>
       <Stack.Screen name= 'LoginWorker' component={LoginWorkerScreen}/>
       <Stack.Screen name= 'UpdatedTask' component={UpdatedTask}/>
-      
+      <Stack.Screen name= 'Faq' component={Faq}/>
+      <Stack.Screen name= 'Privacy' component={Privacy}/>
+      <Stack.Screen name= 'Support' component={Support}/>
+      <Stack.Screen name= 'AboutUs' component={AboutUs}/>
 
     </Stack.Navigator>
 

@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import CheckBoxForm from 'react-native-checkbox-form';
 import { RadioButton } from 'react-native-paper';
 import CustomRadioButton from '../components/CustomRadioButton';
+import Button from '../components/Button';
 
 
 
@@ -49,7 +50,7 @@ const PaymentScreen =({ onNext, StepIndicator, step, navigation, onPrev })=>{
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.container}
       >
-        <ScrollView>
+        <ScrollView  style={{backgroundColor:'#ffffff', padding:20,}}>
 
         
              <View style={styles.headerContainer}>
@@ -107,9 +108,8 @@ const PaymentScreen =({ onNext, StepIndicator, step, navigation, onPrev })=>{
 
                     )}
                   />
-                  <TouchableOpacity onPress={onNext} style={styles.nextButton}>
-                    <Text style={styles.nextButtonText}>Review Post</Text>
-                </TouchableOpacity>
+                  
+                <Button text='Review Post' onPress={onNext}/>
                 </ScrollView>
         </KeyboardAvoidingView>
         
@@ -137,6 +137,7 @@ const styles = StyleSheet.create({
         alignSelf:'flex-start',
         width:150,
         padding:10,
+        marginBottom:100,
         
     },
     nextButton:{

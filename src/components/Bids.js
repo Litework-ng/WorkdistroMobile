@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 import { AirbnbRating } from 'react-native-ratings';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faSearch , faEdit, faLocationDot, faDollarSign, faChevronLeft, faBriefcase} from '@fortawesome/free-solid-svg-icons';
+import {Briefcase, Location } from 'iconsax-react-native';
 
 const Bids = ({navigation}) => {
     const [rating, setRating] = useState(0);
@@ -31,11 +31,11 @@ const Bids = ({navigation}) => {
                 />
                       <View style={{flexDirection:'row', gap:32}}>
                         <View style={{flexDirection:'row', alignContent:'center', gap:5,}} >
-                            <FontAwesomeIcon icon={faBriefcase} size={10} style={{marginTop:2,}} color='#6B6B6B' />
+                            <Briefcase size={10} style={{marginTop:2,}} color='#6B6B6B' />
                             <Text style={{fontSize:12, fontWeight:'400', color:'#6B6B6B',}}>20 jobs completed</Text>
                         </View>
                         <View style={{flexDirection:'row', alignContent:'center', gap:5,}}>
-                            <FontAwesomeIcon icon={faLocationDot} size={10}  style={{marginTop:2,}} color='#6B6B6B'/>
+                            <Location size={10}  style={{marginTop:2,}} color='#6B6B6B'/>
                             <Text style={{fontSize:12, fontWeight:'400', color:'#6B6B6B',}}>Ikeja, Lagos</Text>
                         </View>
                      </View> 

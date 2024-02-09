@@ -3,13 +3,12 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView,
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import UploadPhotoInput from '../components/UploadphotoInput';
-import BottomTabNavigator from '../components/BottomTabNavigator';
-import CustomBottomNavBar from '../components/CustomNavBar';
+
 
 
 const ManaulRequest = ({ navigation }) => {
     const [subject, setSubject] = useState('');
-    const [text, SetText] = useState('');
+    const [text, setText] = useState('');
     const maxLength = 500;
 
     const handleSubjectChange = (value) => {

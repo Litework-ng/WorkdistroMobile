@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native"
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faEye, faEyeSlash} from '@fortawesome/free-solid-svg-icons';
-
+import {Eye, EyeSlash } from 'iconsax-react-native';
 
 
 const TransactionFeedPlus = ({payer, time, amount}) => {
@@ -50,7 +50,7 @@ const WalletWorkerScreen = ({navigation}) => {
                     <View style={{flexDirection:'row', marginTop:12, marginBottom:5, alignItems:'center', gap:8,}}>
                         <Text style={{fontSize:14, fontWeight:'400',}}>Total Balance</Text>
                         <TouchableOpacity onPress={toggleBalance}>
-                        <FontAwesomeIcon icon={showBalance ? faEye : faEyeSlash} size={14} color="#000" />
+                        {showBalance ? <Eye size={16}  color='black'/> : <EyeSlash size={16} color='black'/>} 
                         </TouchableOpacity>
                     
                     </View>

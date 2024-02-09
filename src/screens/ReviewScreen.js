@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, TextInput, KeyboardAvoidingView, ScrollView, } from "react-native";
 import { faChevronLeft, faDollarSign, faLocationDot ,} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { FontAwesomeIcon,  } from '@fortawesome/react-native-fontawesome';
+import {DollarSquare, Location} from 'iconsax-react-native';
 
 
 const ReviewScreen =({onPrev,StepIndicator, step, navigation})=>{
@@ -11,7 +12,7 @@ const ReviewScreen =({onPrev,StepIndicator, step, navigation})=>{
         
     }
     return(
-        <View> 
+        <View  style={{backgroundColor:'#ffffff', padding:20,}}> 
            
            <View style={styles.headerContainer}>
         <TouchableOpacity  onPress={onPrev}>
@@ -26,11 +27,11 @@ const ReviewScreen =({onPrev,StepIndicator, step, navigation})=>{
       <Text style={styles.postDescription}>Lorem ipsum dolor sit amet consectetur. Commodo fames viverra est eget nec feugiat augue semper dolor.</Text>
       <View style={styles.detailsContainer}>
         <View style={styles.itemDetailsContainer}>
-            <FontAwesomeIcon icon={faLocationDot} size={16} color='#7E7E7E'/>
+            <Location size={16} color='#7E7E7E'/>
             <Text style={styles.locationText}>Ikorodu, Lagos</Text>
         </View>
         <View style={styles.itemDetailsContainer}> 
-            <FontAwesomeIcon icon={faDollarSign} size={16} color='#7E7E7E'/>
+            <DollarSquare size={16} color='#7E7E7E'/>
             <Text style={styles.paymentText}>Wallet</Text>
         </View>
 

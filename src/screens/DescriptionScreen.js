@@ -6,6 +6,7 @@ import DropdownInput from '../components/DropDown';
 import UploadPhotoInput from '../components/UploadphotoInput';
 import BottomTabNavigator from '../components/BottomTabNavigator';
 import CustomBottomNavBar from '../components/CustomNavBar';
+import Button from '../components/Button';
 
 
 const DescriptionForm = ({ onNext, StepIndicator, step, navigation, }) => {
@@ -36,7 +37,7 @@ const DescriptionForm = ({ onNext, StepIndicator, step, navigation, }) => {
 
 
   return (
-    <ScrollView style={{backgroundColor:'#ffffff'}}>
+    <ScrollView style={{backgroundColor:'#ffffff', padding:20,}}>
      <View style={styles.headerContainer}>
         <TouchableOpacity  onPress={() => navigation.goBack()}>
       <FontAwesomeIcon icon={faChevronLeft} size={24}/>
@@ -73,9 +74,7 @@ const DescriptionForm = ({ onNext, StepIndicator, step, navigation, }) => {
       {/* Upload photo input */}
       <UploadPhotoInput label='Upload photo'/> 
 
-      <TouchableOpacity onPress={onNext} style={styles.nextButton}>
-        <Text style={styles.nextButtonText}>Next</Text>
-      </TouchableOpacity>
+      <Button text='Next' onPress={onNext}/>
       <CustomBottomNavBar navigation={navigation}/>
     </ScrollView>
   );
@@ -129,12 +128,12 @@ const styles = StyleSheet.create({
     nextButton:{
         backgroundColor: '#1F2A47',
     padding: 10,
-    borderRadius:8,
+    borderRadius:50,
     alignItems: 'center',
     justifyContent:'center',
     alignSelf:'center',
-    width: 355,
-    height: 50,
+    width:340,
+    height:50,
     marginBottom:16,
     },
     nextButtonText:{
