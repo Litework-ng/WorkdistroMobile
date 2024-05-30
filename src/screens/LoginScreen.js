@@ -1,14 +1,16 @@
 import React, {useState, useEffect} from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView, KeyboardAvoidingView, TouchableWithoutFeedback, } from 'react-native';
-import CheckBoxForm from 'react-native-checkbox-form';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image,ActivityIndicator, Alert,ScrollView, KeyboardAvoidingView, TouchableWithoutFeedback, } from 'react-native';
+import CheckBox from 'react-native-check-box';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import * as yup from 'yup';
 import { Formik } from 'formik';
 import {Eye, EyeSlash } from 'iconsax-react-native';
-
-
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from '../components/Api'
+import { Platform } from 'react-native';
+import { Checkbox } from 'react-native-paper';
+import CheckboxForm from 'react-native-checkbox-form';
 
 const LoginScreen = ({navigation}) => {
  
@@ -26,7 +28,12 @@ const LoginScreen = ({navigation}) => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [isFormTouched, setIsFormTouched] = useState(false);
   const [termsChecked, setTermsChecked] = useState(false);
+  const [isLogging, setIsLogging] = useState(false);
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [rememberPassword,setRememberPassword] =useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
+  
   useEffect(() => {
     validateForm();
   }, []);
@@ -54,21 +61,45 @@ const LoginScreen = ({navigation}) => {
     }
   };
 
-  const handleLogIn = async (values) => {
-    console.log('presss')
+    
+
+  const handleLogin = async (values, actions) => {
+ 
+    await validationSchema.validate(values, { abortEarly: false });
     try {
-      await validationSchema.validate(values, { abortEarly: false });
-      navigation.navigate('BottomTabs');
-      console.log('Sign up button pressed');
-       
-    } catch (error) {
-      const newErrors = {};
-      error.inner.forEach((e) => {
-        newErrors[e.path] = e.message;
+      setIsLogging(true)
+      setErrorMessage('');
+      // Make API call to authenticate user
+      const response = await api.post('login/', {
+        email: values.email,
+        password: values.password
       });
-      setErrors(newErrors);
-      console.log('Form validation failed');
+  
+      // Check if login was successful
+      if (response.data.response) {
+        // Store token securely
+        await AsyncStorage.setItem('logintoken', response.data.access_token);
+        
+        // Navigate to the next screen or perform any other action
+        navigation.navigate('BottomTabs');
+        console.log('Login successful');
+        
+      } else  {
+        // Handle login failure
+        setErrorMessage(data.message || 'Invalid login credentials');
+        console.log('Login failed');
+      }
+    } catch (error) {
+      if (error) {
+        // Handle login failure
+        setErrorMessage('An error occurred during login. Please try again.');
+        console.log('Login failed');
+      }
+      // Handle API call errors
+      setErrorMessage('An error occurred during login. Please try again.');
+      console.error('Login Error:', error);
     }
+    setIsLogging(false)
   };
 
   
@@ -164,7 +195,7 @@ const LoginScreen = ({navigation}) => {
       <Formik
             initialValues={{ email: '',  password: '' }}
             validationSchema={validationSchema}
-            onSubmit={handleLogIn}
+            onSubmit={handleLogin}
           >
             {({
               values,
@@ -179,7 +210,10 @@ const LoginScreen = ({navigation}) => {
             }) => (
               
               <View style={styles.form}>
-               
+                
+                    {errorMessage ? (
+                      <Text style={{ color: 'red', marginBottom: 16 }}>{errorMessage}</Text>
+                    ) : null}
 
                 <View style={styles.labelInputContainer}>
                   <Text style={styles.label}>Email</Text>
@@ -228,10 +262,10 @@ const LoginScreen = ({navigation}) => {
                 </View>
                 <View style={styles.userAccessContaineer}>
 
-                            <CheckBoxForm style={styles.checkboxContainer}
+                            <CheckboxForm style={styles.checkboxContainer}
                             iconSize={12}
                             iconColor='#000'
-                            textStyle={{fontSize:12, color:'#1F2A47'}}
+                            textStyle={{fontSize:12, color:'#1F2A47',fontFamily: 'Manrope-Regular',}}
                             onChecked={handleTermsCheck}
                             itemCheckedKey='RNchecked'
                             
@@ -249,16 +283,29 @@ const LoginScreen = ({navigation}) => {
                 </View>
                 
 
-                <TouchableOpacity
+                {isLogging ? (
+                  <TouchableOpacity
                   style={[
                     styles.signUpButton,
-                    !isValid  ? styles.disabledButton : null,
+                    !isValid? styles.disabledButton : null,
                   ]}
                   onPress={handleSubmit}
                   disabled={!isValid }
                 >
-                  <Text style={styles.signUpButtonText}>Log In</Text>
-                </TouchableOpacity>
+                      <ActivityIndicator size="large" color="#fff" />
+                      </TouchableOpacity>
+                    ) : (
+                      <TouchableOpacity
+                        style={[
+                          styles.signUpButton,
+                          !isValid  ? styles.disabledButton : null,
+                        ]}
+                        onPress={handleSubmit}
+                        disabled={!isValid}
+                      >
+                        <Text style={styles.signUpButtonText}>Log in</Text>
+                      </TouchableOpacity>
+                    )}
               </View>
             )}
           </Formik>
@@ -289,6 +336,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 24,
     paddingLeft:0,
+    fontFamily: 'Manrope-Bold',
   },
   form: {
     width: '100%',
@@ -303,6 +351,7 @@ const styles = StyleSheet.create({
     marginTop:10,
     fontSize: 14,
     color:'#1A1A1A',
+    fontFamily: 'Manrope-Regular',
   },
 
   labelPassword: {
@@ -311,6 +360,7 @@ const styles = StyleSheet.create({
     marginTop:10,
     fontSize: 14,
     color:'#1A1A1A',
+    fontFamily: 'Manrope-Regular',
   },
   
   input:{
@@ -336,6 +386,7 @@ const styles = StyleSheet.create({
   signUpButtonText: {
     color: 'white',
     fontWeight: 'bold',
+    fontFamily: 'Manrope-Bold',
   },
 
   activeInput: {
@@ -393,6 +444,7 @@ const styles = StyleSheet.create({
   signupRedirect:{
       color:'#1F2A47',
       fontWeight:700,
+      fontFamily: 'Manrope-Regular',
   }, 
   userAccessContaineer:{
     flexDirection:'row',
@@ -402,6 +454,7 @@ const styles = StyleSheet.create({
   forgotPasswordText:{
     color:'#1F2A47',
     fontSize:12,
+    fontFamily: 'Manrope-Regular',
   }
 
 });

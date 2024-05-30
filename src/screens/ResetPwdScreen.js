@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, ScrollView, Image} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, KeyboardAvoidingView, ScrollView, Image} from 'react-native';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import {  faChevronLeft, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import {Eye, EyeSlash } from 'iconsax-react-native';
+import {Eye, EyeSlash, ArrowLeft2 } from 'iconsax-react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from '../components/Api'
 
 const validationSchema = yup.object().shape({
   code: yup.string().required('Verification code is required'),
@@ -12,16 +14,44 @@ const validationSchema = yup.object().shape({
   confirmPassword: yup.string().oneOf([yup.ref('newPassword'), null], 'Passwords must match'),
 });
 
-const ResetPassword = () => {
-  const handleResetPassword = (values) => {
-    // Implement your logic here to handle password reset
-    console.log('Resetting password with:', values);
-    // You can navigate to the next screen or perform any other action here
+const ResetPassword = ({navigation}) => {
+const [forgetting, setForgetting]= useState() 
+  const handleResetPassword = async (values) => {
+    console.log(values.code)
+    console.log(values.password)
+    try {
+   const token = await AsyncStorage.getItem('forgotToken');
+      resetting(true)
+      // Make a request to the forgot password API endpoint
+      const response = await api.put('/user/forgotten-password/', {
+        otp: values.code,
+        password: values.newPassword,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}` // Include token in request headers
+        }
+      
+      });
+      // Handle successful response
+      Alert.alert('Password Reset Email Sent', 'An OTP code has been sent to your email address.');
+      navigation.navigate('Login')
+     
+    } catch (error) {
+      // Handle error response
+      Alert.alert('Error', 'Failed to send password reset email. Please try again later.');
+      console.error('Login Error:', error);
+    }
+    setResetting(false)
   };
   const [showPassword, setShowPassword] = React.useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
+  };
+
+  const toggleShowConfirmPassword = () => {
+    setShowConfirmPassword(!showConfirmPassword);
   };
   const [code, setCode] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -29,6 +59,7 @@ const ResetPassword = () => {
   const [isCodeFocused, setIsCodeFocused] = useState(false);
   const [isNewPasswordFocused, setIsNewPasswordFocused] = useState(false);
   const [isConfirmPasswordFocused, setIsConfirmPasswordFocused] = useState(false)
+  const [resetting, setResetting] = useState(false)
   
 
   return (
@@ -69,45 +100,60 @@ const ResetPassword = () => {
                   <Text style={styles.label}>New Password</Text>
             <TextInput
               style={[styles.input, touched.newPassword && errors.newPassword && styles.errorInput,  isNewPasswordFocused && styles.activeInput]}
-               secureTextEntry={!showPassword}
+              secureTextEntry={!showPassword}
               value={values.newPassword}
               onChangeText={handleChange('newPassword')}
               onFocus={() => setIsNewPasswordFocused(true)}
               onBlur={() => setIsNewPasswordFocused(false)}
             />
              <TouchableOpacity style={styles.showPasswordButton} onPress={toggleShowPassword}>
-                      <FontAwesomeIcon
-                        icon={showPassword ? Eye : EyeSlash}
-                        size={20}
-                        color="gray"
-                      />
-                      </TouchableOpacity>
+             {showPassword ? <Eye color='gray' size={20}/> : <EyeSlash color='gray' size={20}/>}
+               </TouchableOpacity>
             {touched.newPassword && errors.newPassword && <Text style={styles.errorText}>{errors.newPassword}</Text>}
             </View>
             <View style={styles.labelInputContainer}>
                   <Text style={styles.label}>Confirm Password</Text>
             <TextInput
               style={[styles.input, touched.confirmPassword && errors.confirmPassword && styles.errorInput,  isConfirmPasswordFocused && styles.activeInput]}
-              secureTextEntry
+              secureTextEntry={!showConfirmPassword}
               value={values.confirmPassword}
               onChangeText={handleChange('confirmPassword')}
               onFocus={() => setIsConfirmPasswordFocused(true)}
               onBlur={() =>  setIsConfirmPasswordFocused(false)}
             />
-             <TouchableOpacity style={styles.showPasswordButton} onPress={toggleShowPassword}>
-                      <FontAwesomeIcon
-                        icon={showPassword ? Eye : EyeSlash}
-                        size={20}
-                        color="gray"
-                      />
+             <TouchableOpacity style={styles.showPasswordButton} onPress={toggleShowConfirmPassword}>
+                      
+                        {showPassword ? <Eye color='gray' size={20}/> : <EyeSlash color='gray' size={20}/>}
+                       
                       </TouchableOpacity>
             {touched.confirmPassword && errors.confirmPassword && (
               <Text style={styles.errorText}>{errors.confirmPassword}</Text>
             )}
             </View>
-            <TouchableOpacity style={styles.resetButton} onPress={handleSubmit}>
-              <Text style={styles.resetButtonText}>Reset Password</Text>
-            </TouchableOpacity>
+            
+            {resetting ? (
+                  <TouchableOpacity
+                  style={[
+                    styles.signUpButton,
+                    !isValid || !termsChecked ? styles.disabledButton : null,
+                  ]}
+                  onPress={handleSubmit}
+                  disabled={!isValid || !termsChecked}
+                >
+                      <ActivityIndicator size="large" color="#fff" />
+                      </TouchableOpacity>
+                    ) : (
+                      <TouchableOpacity
+                        style={[
+                          styles.signUpButton,
+                          !isValid || !termsChecked ? styles.disabledButton : null,
+                        ]}
+                        onPress={handleSubmit}
+                        disabled={!isValid || !termsChecked}
+                      >
+                        <Text style={styles.signUpButtonText}>Reset Password</Text>
+                      </TouchableOpacity>
+                    )}
           </View>
         )}
       </Formik>

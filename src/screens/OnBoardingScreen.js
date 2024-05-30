@@ -1,21 +1,25 @@
 // OnboardingScreen.js
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView} from 'react-native';
-import OnboardingSlides from './OnBoardingSlides';
+import OnboardingSlides from '../components/OnBoardingSlides';
 
 const OnboardingScreen = ({navigation}) => {
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false} >
+      
       <OnboardingSlides navigation={navigation}/>
       {/* Add your onboarding content here */}
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
+    flexGrow: 1,
+    alignItems:'stretch',
+    justifyContent:'space-between',
+    backgroundColor:'#fff'
+    
   },
 });
 

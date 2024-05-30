@@ -3,14 +3,16 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, FlatList, ScrollView, Alert } from 'react-native';
 import Swiper from 'react-native-swiper';
 import { useNavigation } from '@react-navigation/native';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { useUserContext } from '../components/UserContext';
-
+import { useUserActivity } from '../components/UserContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const OnboardingSlides = ({ navigation }) => {
   const swiperRef = React.useRef(null);
+  const { handleUserActivity } = useUserActivity();
   const [becomeWorkerActive, setBecomeWorkerActive] = useState(false);
   const [findWorkerActive, setFindWorkerActive] = useState(false)
  
@@ -19,19 +21,8 @@ const OnboardingSlides = ({ navigation }) => {
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [isBecomeWorkerSelected, setIsBecomeWorkerSelected] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
-
-  const allJobs = [
-    'Job1',
-    'Job2',
-    'Job3',
-    'Job4',
-    'Job5',
-    'CustomJob1',
-    'CustomJob2',
-    'CustomJob3',
-    'CustomJob4',
-    'CustomJob5',
-  ];
+  const [services, setServices] = useState([]);
+ const [allJobs, setAllJobs] = useState([])
 
   const popularJobs = ['Job1', 'Job3', 'Job5'];
 
@@ -55,7 +46,12 @@ const OnboardingSlides = ({ navigation }) => {
     });
     setSearchTerm('');
     setSelectedJob(job);
+    handleUserActivity();
   };
+
+  
+
+
 
   const { userSelection, setSelection } = useUserContext();
 
@@ -69,11 +65,14 @@ const OnboardingSlides = ({ navigation }) => {
     );
     setFilteredJobs(filtered);
     setSelectedJob(null);
+    handleUserActivity();
   };
 
 
-  const handleGetStarted= (userType) => {
-   
+
+  const handleGetStarted= async(userType) => {
+    try {
+      await AsyncStorage.setItem('hasOnboarded', true);
 
     // Conditionally navigate based on user selection
     if (userType === 'becomeWorker' && selectedJob) {
@@ -86,13 +85,38 @@ const OnboardingSlides = ({ navigation }) => {
     console.log('pressed UserSelect')
 
     console.log(selectedJobs)
+  }catch (error) {
+    console.error('Failed to save onboarding status to storage', error);
+  }
+}
+
+  const loadServicesFromStorage = async () => {
+    try {
+      const storedServices = await AsyncStorage.getItem('services');
+      if (storedServices) {
+        const servicesData = JSON.parse(storedServices);
+        setServices(servicesData);
+
+        // Transform the services data to match the allJobs structure
+        const jobsArray = servicesData.map(service => `  ${service.name}`);
+        setAllJobs(jobsArray);
+        console.log(allJobs)
+      }
+    } catch (error) {
+      console.error('Failed to load services from storage', error);
+    }
   };
+
+  useEffect(() => {
+    loadServicesFromStorage();
+  }, []);
 
   const handleBecomeWorker = () => {
     setBecomeWorkerActive(true);
     setFindWorkerActive(false);
    setSelectedUserType('becomeWorker');
    setIsBecomeWorkerSelected(true);
+   navigation.navigate('JobSelectionModal')
    console.log('worker')
   };
 
@@ -164,10 +188,15 @@ const OnboardingSlides = ({ navigation }) => {
       loop={false}
       showsButtons={false}
       renderPagination={renderPagination}
+      style={{ height:410, marginBottom:130,}}
     >
       <View style={styles.slide}>
       <View style={styles.headerContainer}>
-          <Image source={require('../../assets/images/logo.png')} style={styles.logo} />
+        <View style={{flexDirection:'row', alignItems:'center', marginLeft:30,}}>
+
+          <Image source={require('../../assets/icon.png')} style={styles.iconLogo} />
+          <Image source={{uri:'https://nodal-episode-400211.firebaseapp.com/splashImg.png'}} style={styles.wordLogo} />
+        </View>
           <TouchableOpacity onPress={handleSkip}>
             <Text style={styles.skipText}>Skip</Text>
           </TouchableOpacity>
@@ -179,7 +208,11 @@ const OnboardingSlides = ({ navigation }) => {
      
       <View style={styles.slide}>
       <View style={styles.headerContainer}>
-          <Image source={require('../../assets/images/logo.png')} style={styles.logo} />
+        <View style={{flexDirection:'row', alignItems:'center', marginLeft:30,}}>
+
+        <Image source={require('../../assets/icon.png')} style={styles.iconLogo} />
+        <Image source={require('../../assets/splashImg.png')} style={styles.wordLogo} />
+        </View>
           <TouchableOpacity onPress={handleSkip}>
             <Text style={styles.skipText}>Skip</Text>
           </TouchableOpacity>
@@ -196,7 +229,11 @@ const OnboardingSlides = ({ navigation }) => {
           <ScrollView style={styles.lastSlide}>
       
           <View style={styles.headerContainer}>
-              <Image source={require('../../assets/images/logo.png')} style={styles.lastlogo} />
+               <View style={{flexDirection:'row', alignItems:'center', marginLeft:30,}}>
+
+                <Image source={require('../../assets/icon.png')} style={styles.iconLogo} />
+                <Image source={require('../../assets/splashImg.png')} style={styles.wordLogo} />
+              </View>
             </View>
             <View style={{alignItems:'center'}}>
             <Text style={styles.title}>How Will You Be Using WorkDistro Today?</Text>
@@ -223,93 +260,11 @@ const OnboardingSlides = ({ navigation }) => {
                 <Text style={styles.selectionText}>To Find A Worker</Text>
               </TouchableOpacity>
             </View>
-            {isBecomeWorkerSelected && (
-            <View>
-            <Text style={{fontSize:16, fontWeight:'700', textAlign:'center', marginHorizontal:20, marginTop:20,}}>Select Your Speciality</Text>
-            </View>
-            )}
-             {isBecomeWorkerSelected && (
-            <View style={styles.searchContainer}>
-            <TextInput
-            placeholder="Search Jobs"
-            value={searchTerm}
-            onChangeText={searchJobs}
-            style={styles.searchInput}
-          />
-            <FontAwesomeIcon icon={faSearch} size={24} color="#292D32" style={styles.searchIcon} />
-    
-            </View>
-             )}
+          
             </View>
             
-              {isBecomeWorkerSelected && searchTerm.length > 0 && (
-            <FlatList
-            style={{marginTop:20, marginBottom:150,}}
-            data={filteredJobs}
-            keyExtractor={(item) => item}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                onPress={() => handleJobSelection(item)}
-                style={{
-                  padding: 8,
-                  paddingVertical:15,
-                  marginVertical:10,
-                  marginHorizontal:10,
-                  marginBottom:0,
-                  marginTop:0,
-                  borderWidth:1,
-                  borderRadius:8,
-                  borderBottomWidth:0,
-                  borderColor:'#CECECE',
-                  backgroundColor: selectedJobs === item ? '#1F2A47' : 'white',
-                 
-                  
-                }}
-              >
-                <Text style={{  color: selectedJobs === item ? 'white' : 'black', }}>{item}</Text>
-              </TouchableOpacity>
-            )}
-          />
-            )}
-
-          {selectedJob && isBecomeWorkerSelected && (
-              <TouchableOpacity
-                onPress={() => handleJobSelection(selectedJob)}
-                style={{
-                  padding: 8,
-                  margin: 8,
-                  backgroundColor: '#1F2A47',
-                  borderRadius: 8,
-                  width:135,
-                  alignSelf:'center',
-                }}
-              >
-                <Text style={{ color: 'white', alignSelf:'center', }}>{selectedJob}</Text>
-              </TouchableOpacity>
-            )}
-           
             
-           {isBecomeWorkerSelected && (
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent:'center',  }}>
-            {popularJobs.map((job) => (
-              <TouchableOpacity
-                key={job}
-                onPress={() => handleJobSelection(job)}
-                style={{
-                  padding: 8,
-                  paddingHorizontal:25,
-                  margin: 8,
-                  backgroundColor: selectedJobs.includes(job) ? '#1F2A47' : 'white',
-                  borderRadius: 25,
-                  borderWidth:1,
-                  borderColor:'#CECECE',
-                }}
-              >
-                <Text style={{ color: selectedJobs.includes(job) ? 'white' : 'black', }}>{job}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-           )}
+         
             
           </ScrollView>
         )}
@@ -326,12 +281,14 @@ const OnboardingSlides = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   slide: {
-    flex: 1,
+    
     alignItems: 'center',
+    
     backgroundColor: '#fff',
   },
   lastSlide: {
     flex: 1,
+    
     backgroundColor: '#fff',
   },
 
@@ -343,9 +300,10 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight:'600',
     marginBottom: 8,
     marginTop:53,
+    fontFamily: 'Manrope-SemiBold',
   },
   description:{
     fontSize:14,
@@ -353,6 +311,7 @@ const styles = StyleSheet.create({
     color:'#595959',
     textAlign:'center',
     width:298,
+    fontFamily: 'Manrope-Medium',
   },
   image: {
     width: 350.541,
@@ -369,10 +328,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap:50,
     paddingHorizontal: 20,
+    
     paddingTop: 35, // Adjust the padding to move the header down
   },
   logo:{
     width:230,
+    height:48,
+  },
+  iconLogo:{
+    width:48,
+    height:48,
+  },
+  wordLogo:{
+    width:182,
     height:48,
   },
 
@@ -385,8 +353,10 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 0,
-    marginBottom:30,
+    marginTop: 15,
+    marginBottom:50,
+   
+    backgroundColor:'#fff',
   },
  
   indicators: {
@@ -422,9 +392,12 @@ const styles = StyleSheet.create({
   nextButtonText: {
     color: 'white',
     fontSize: 16,
+    fontFamily: 'Manrope-Medium',
   },
   skipText:{
-    color: '#777'
+    color: '#777',
+    fontFamily: 'Manrope-Regular',
+    marginTop:5,
   },
 
   searchInput: {
@@ -467,7 +440,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     width:91,
     textAlign:'center',
-    
+    fontFamily: 'Manrope-Medium',
   },
 
   disabledButton:{
@@ -490,6 +463,7 @@ const styles = StyleSheet.create({
   selectionText:{
     fontSize:16,
     marginTop:10,
+    fontFamily: 'Manrope-Regular',
   },
   activeSelection:{
     borderColor: '#1F2A47',

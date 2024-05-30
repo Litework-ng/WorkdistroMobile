@@ -1,35 +1,73 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, TextInput, TouchableOpacity, Text, Alert, StyleSheet } from 'react-native';
+import { View, TextInput, TouchableOpacity, Text, Alert, StyleSheet, Modal, ActivityIndicator } from 'react-native';
 import { faEye, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from '../components/Api'
 
 const OtpVerificationWorkerScreen = ({navigation}) => {
   const [otp, setOtp] = useState(['', '', '', '']);
   const [focusedInput, setFocusedInput] = useState(null);
   const [activeIndex, setActiveIndex] = useState(null);
+  const [verifyingOtp, setVerifyingOtp] = useState(false);
   const inputRefs = useRef([...Array(4)].map(() => React.createRef()));
   const expectedOtp = '1234';
+  const [phoneNumber, setPhoneNumber] = useState('');
+  useEffect(() => {
+    const getPhoneNumber = async () => {
+      try {
+        const storedPhoneNumber = await AsyncStorage.getItem('phoneNumber');
+        if (storedPhoneNumber !== null) {
+          setPhoneNumber(storedPhoneNumber);
+        }
+      } catch (error) {
+        console.error('Error retrieving phone number from AsyncStorage:', error);
+      }
+    };
+
+    getPhoneNumber();
+  }, []);
+
   const verifyOtp = async (enteredOtp) => {
+   
     try {
-      // Add your OTP verification logic here
-      // For example, you might send the entered OTP to a server for validation
+      setVerifyingOtp(true); 
+      // Make API call to verify OTP
+      const token = await AsyncStorage.getItem('token');
+
+      if (!token) {
+        // Handle case where token is not found in AsyncStorage
+        console.error('Token not found in AsyncStorage');
+        return;
+      }
+
+      const response = await api.post('verify-otp', {
+        otp: enteredOtp
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}` // Include token in request headers
+        }
+      
+      });
   
-      // Simulate a successful verification for demonstration purposes
-      if (enteredOtp === '1234') {
+      // Check if OTP verification was successful
+      if (response.data.response) {
         console.log('OTP verification successful!');
-        navigation.navigate('HomeWorker');
+        navigation.navigate('BottomTabs');
         // Navigate to the next screen or perform any other action
       } else {
         console.log('Invalid OTP. Please try again.');
+        Alert('Invalid OTP. Please try again.');
         // Handle the case where the OTP is invalid
       }
     } catch (error) {
       console.error('Error verifying OTP:', error);
       // Handle any errors that occur during the verification process
-     
     }
+      setVerifyingOtp(false);
   };
-  
+
+
   const handleVerifyOtp = () => {
     const enteredOtp = otp.join('');
      // Replace with the actual OTP sent to the user
@@ -87,7 +125,7 @@ const OtpVerificationWorkerScreen = ({navigation}) => {
         </TouchableOpacity>
       <Text style={styles.headerText}>Verification</Text>
       </View>
-      <Text style={styles.verificationInstruction}>Please input the verification code sent to +234 8134 4356 44 <TouchableOpacity><Text style={styles.changeNumber}> Change</Text></TouchableOpacity></Text>
+      <Text style={styles.verificationInstruction}>Please input the verification code sent to {phoneNumber} <TouchableOpacity><Text style={styles.changeNumber}> Change</Text></TouchableOpacity></Text>
       {/* Input Fields */}
       <View style={styles.inputContainer}>
         {otp.map((digit, index) => (
@@ -103,6 +141,14 @@ const OtpVerificationWorkerScreen = ({navigation}) => {
           />
         ))}
       </View>
+      <Modal visible={verifyingOtp} transparent={true} animationType="fade">
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <ActivityIndicator size="large" color='#1F2A47' />
+            <Text style={styles.modalText}>Verifying OTP...</Text>
+          </View>
+        </View>
+      </Modal>
 
      
 
@@ -128,6 +174,7 @@ headerContainer:{
 headerText:{
   fontSize:24,
   fontWeight:'700',
+  fontFamily: 'Manrope-Bold',
 },
 verificationInstruction:{
   alignSelf:'center',
@@ -135,6 +182,7 @@ verificationInstruction:{
   fontSize:15,
   textAlign:'center',
   marginTop:16,
+  fontFamily: 'Manrope-Regular',
 },
 changeNumber:{
   fontSize:15,
@@ -184,6 +232,7 @@ resendButtonText: {
 color: '#000',
 textAlign: 'center',
 fontSize: 14,
+fontFamily: 'Manrope-Regular',
 },
 resend:{
   fontSize:14,
@@ -196,6 +245,22 @@ resend:{
 activeInput: {
   borderColor: '#3E548E',
  
+},
+modalContainer: {
+  flex: 1,
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+},
+modalContent: {
+  backgroundColor: 'white',
+  padding: 20,
+  borderRadius: 10,
+  alignItems: 'center',
+},
+modalText: {
+  marginTop: 10,
+  fontSize: 16,
 },
 });
 

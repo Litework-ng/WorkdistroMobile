@@ -30,7 +30,9 @@ const ClientBottomTabs = ({component, onpress}) => {
             height:84,
         },
         labelStyle: {
-          fontSize: 12,
+          fontSize: 16,
+          fontFamily: 'Manrope-Bold',
+          
         },
       }}
     >
@@ -39,6 +41,7 @@ const ClientBottomTabs = ({component, onpress}) => {
         component={HomeScreen}
         options={{
           tabBarIcon: ({ color }) => <Home color={color} size={24} />,
+          tabBarLabelStyle:{fontFamily: 'Manrope-Regular', }
         }}
         
       />
@@ -47,6 +50,7 @@ const ClientBottomTabs = ({component, onpress}) => {
         component={TaskScreenDemo}
         options={{
           tabBarIcon: ({ color }) => <Briefcase color={color} size={24} />,
+          tabBarLabelStyle:{fontFamily: 'Manrope-Regular', }
         }}
       />
       <Tab.Screen
@@ -54,6 +58,7 @@ const ClientBottomTabs = ({component, onpress}) => {
         component={WalletScreen}
         options={{
           tabBarIcon: ({ color }) => <Wallet color={color} size={24} />,
+          tabBarLabelStyle:{fontFamily: 'Manrope-Regular', }
         }}
       />
       <Tab.Screen
@@ -61,6 +66,7 @@ const ClientBottomTabs = ({component, onpress}) => {
         component={NotificationsScreen}
         options={{
           tabBarIcon: ({ color }) => <Notification color={color} size={24} />,
+          tabBarLabelStyle:{fontFamily: 'Manrope-Regular', }
         }}
       />
       <Tab.Screen
@@ -68,6 +74,7 @@ const ClientBottomTabs = ({component, onpress}) => {
         component={ProfileScreen}
         options={{
           tabBarIcon: ({ color }) => <User color={color} size={24} />,
+          tabBarLabelStyle:{fontFamily: 'Manrope-Regular', }
         }}
       />
     </Tab.Navigator>

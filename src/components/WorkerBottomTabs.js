@@ -42,6 +42,7 @@ const WorkerBottomTabs = ({component, onpress}) => {
         component={HomeScreenWorker}
         options={{
           tabBarIcon: ({ color }) => <Home  color={color} size={24} />,
+          tabBarLabelStyle:{fontFamily: 'Manrope-Regular', }
         }}
         
       />
@@ -50,6 +51,7 @@ const WorkerBottomTabs = ({component, onpress}) => {
         component={WorkerTaskScreen}
         options={{
           tabBarIcon: ({ color }) => <Briefcase  color={color} size={24} />,
+          tabBarLabelStyle:{fontFamily: 'Manrope-Regular', }
         }}
       />
       <Tab.Screen
@@ -57,6 +59,7 @@ const WorkerBottomTabs = ({component, onpress}) => {
         component={WalletWorkerScreen}
         options={{
           tabBarIcon: ({ color }) => <Wallet color={color} size={24} />,
+          tabBarLabelStyle:{fontFamily: 'Manrope-Regular', }
         }}
       />
       <Tab.Screen
@@ -64,6 +67,7 @@ const WorkerBottomTabs = ({component, onpress}) => {
         component={NotificationWorkerScreen}
         options={{
           tabBarIcon: ({ color }) => <Notification color={color} size={24} />,
+          tabBarLabelStyle:{fontFamily: 'Manrope-Regular', }
         }}
       />
       <Tab.Screen
@@ -71,6 +75,7 @@ const WorkerBottomTabs = ({component, onpress}) => {
         component={ProfileWorkerScreen}
         options={{
           tabBarIcon: ({ color }) => <User color={color} size={24} />,
+          tabBarLabelStyle:{fontFamily: 'Manrope-Regular', }
         }}
       />
     </Tab.Navigator>

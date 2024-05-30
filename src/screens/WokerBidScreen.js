@@ -54,7 +54,7 @@ const WorkerBidScreen = ({navigation}) => {
                 
                 <Text style={styles.characters}>{`${text.length}/500`}</Text>
             </View>
-            <Button text='Bid' onPress={navigation.navigate('WorkerTask')}/> 
+            <Button text='Bid' onPress={()=>navigation.navigate('WorkerTask')}/> 
         </View>
         </TouchableWithoutFeedback>
     );

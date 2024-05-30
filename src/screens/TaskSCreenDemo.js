@@ -1,18 +1,21 @@
-import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Image, StyleSheet, ScrollView, Modal, TouchableOpacity } from 'react-native';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import PendingTask from '../components/PendingTask';
 import InProgressTask from '../components/InProgressTask';
 import CompletedTask from '../components/CompletedTask';
 
 const TaskScreenDemo = ({navigation}) => {
+
   const [index, setIndex] = useState(0);
+
   const [routes] = useState([
     { key: 'pending', title: 'Pending' },
     { key: 'inProgress', title: 'In-Progress' },
     { key: 'completed', title: 'Completed' },
   ]);
 
+  
   const renderScene = SceneMap({
     pending: () => <PendingTabContent navigation={navigation} />,
     inProgress: () => <InProgressTabContent navigation={navigation} />,
@@ -28,6 +31,8 @@ const TaskScreenDemo = ({navigation}) => {
     />
   );
 
+
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -42,8 +47,10 @@ const TaskScreenDemo = ({navigation}) => {
         onIndexChange={setIndex}
         renderTabBar={renderTabBar}
       />
+
     </View>
   );
+  
 };
 
 const TaskTabContent = ({ tab }) => {
@@ -60,6 +67,7 @@ const TaskTabContent = ({ tab }) => {
 const PendingTabContent = ({ navigation }) => {
     // Customize the content based on the selected tab (pending or completed)
     // You can use your TaskItem component here to render individual tasks
+    
     return (
       <ScrollView style={styles.tabContent}>
         <View style={{paddingBottom:100,}}>
@@ -70,13 +78,13 @@ const PendingTabContent = ({ navigation }) => {
     );
   };
 
-  const InProgressTabContent = ({ navigation }) => {
+  const InProgressTabContent = ({ navigation, imageSource,  }) => {
     // Customize the content based on the selected tab (pending or completed)
     // You can use your TaskItem component here to render individual tasks
     return (
       <ScrollView style={styles.tabContent}>
         <View style={{paddingBottom:100,}}>
-        <InProgressTask navigation={navigation}/>
+        <InProgressTask navigation={navigation} imageSource={require('../../assets/images/services.png')} />
        
         </View>
       </ScrollView>
@@ -95,6 +103,8 @@ const PendingTabContent = ({ navigation }) => {
       </ScrollView>
     );
   };
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -137,6 +147,8 @@ user:{
     
   
   },
+
+  
 });
 
 export default TaskScreenDemo;

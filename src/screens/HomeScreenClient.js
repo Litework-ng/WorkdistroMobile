@@ -32,7 +32,11 @@ const HomeScreen = ({ navigation }) => {
     <TouchableWithoutFeedback onPress={handleSearchBlur}>
         
     <View style={styles.container}>
-        <Image source={require('../../assets/images/logo.png')} style={styles.logo} />        
+    <View style={{flexDirection:'row', alignItems:'center', marginLeft:0, marginTop:10, marginBottom:10, gap:30}}>
+
+        <Image source={require('../../assets/icon.png')} style={styles.iconLogo} />
+        <Image source={{uri:'https://nodal-episode-400211.firebaseapp.com/splashImg.png'}} style={styles.wordLogo} />
+    </View>      
             <Text style={styles.welcomeText}>Hello Tee</Text>
                 <View style={styles.searchContainer}>
             <TextInput
@@ -151,15 +155,26 @@ const styles = StyleSheet.create({
         justifyContent:'center',
         alignSelf:'center'
       },
+
+      iconLogo:{
+        width:48,
+        height:48,
+      },
+      wordLogo:{
+        width:182,
+        height:48,
+      },
       welcomeText:{
         fontSize:18,
         fontWeight:'700',
         marginBottom:8,
         color:'#1A1A1A',
+        fontFamily: 'Manrope-Bold',
       },
       servicesTitle:{
         fontSize:16,
         fontWeight:'600',
+        fontFamily: 'Manrope-Bold',
       },
       ManaulRequestcontainer:{
         flexDirection:'row',
@@ -172,6 +187,7 @@ const styles = StyleSheet.create({
         color:'#31DE9E',
         fontSize:10,
         paddingTop:5,
+        fontFamily: 'Manrope-Regular',
       },
       searchContainer: {
         flexDirection: 'row',
@@ -196,6 +212,7 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#333333',
         height:40,
+        fontFamily: 'Manrope-Regular',
       },
       servicesGrid:{
         flexDirection:'row',
@@ -205,6 +222,7 @@ const styles = StyleSheet.create({
       serviceItemLabel:{
         alignSelf:'center',
         marginBottom:32,
+        fontFamily: 'Manrope-Medium',
       },
      
 })

@@ -1,11 +1,15 @@
 import React, {useState, useEffect} from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView, KeyboardAvoidingView, TouchableWithoutFeedback, } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image, ScrollView,ActivityIndicator, KeyboardAvoidingView, TouchableWithoutFeedback, } from 'react-native';
 import CheckBoxForm from 'react-native-checkbox-form';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import * as yup from 'yup';
 import { Formik } from 'formik';
 import {Eye, EyeSlash } from 'iconsax-react-native';
+import api from '../components/Api'
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { Platform } from 'react-native';
 
 
 
@@ -28,6 +32,8 @@ const RegistrationScreenClient = ({navigation}) => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [isFormTouched, setIsFormTouched] = useState(false);
   const [termsChecked, setTermsChecked] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
+
 
   useEffect(() => {
     validateForm();
@@ -56,19 +62,61 @@ const RegistrationScreenClient = ({navigation}) => {
     }
   };
 
-  const handleSignUp = async (values) => {
+  const completeRegistration = async () => {
     try {
-      await validationSchema.validate(values, { abortEarly: false });
-      navigation.navigate('OtpScreen');
-      console.log('Sign up button pressed');
-       
+      // Perform your registration logic here
+      await AsyncStorage.setItem('hasRegistered', 'true');
+      navigation.navigate('Login');
     } catch (error) {
-      const newErrors = {};
-      error.inner.forEach((e) => {
-        newErrors[e.path] = e.message;
+      console.error('Failed to complete registration', error);
+    }
+  };
+
+  const handleSignUp = async (values, actions) => {
+
+    try {
+      setIsRegistering(true)
+      await validationSchema.validate(values, { abortEarly: false });
+      const response = await api.post('register/', {
+        full_name: values.fullName,
+        email: values.email,
+        phone_number: values.phoneNumber,
+        password: values.password,
+        is_worker:false
       });
-      setErrors(newErrors);
+      if (response.data.response) {
+        // Navigate to the OTP screen or any other screen
+        console.log(response)
+        const phoneNumber = response.data.user.phone_number;
+        await AsyncStorage.setItem('token', response.data.access_token);
+        await AsyncStorage.setItem('phoneNumber', phoneNumber);
+        completeRegistration();
+        navigation.navigate('OtpScreen');
+        console.log('Sign up button pressed');
+        
+      } else {
+        // Handle registration failure
+        Alert.alert('Registration Failed', response.data.message);
+        console.log('Registration failed');
+      }
+       
+    } catch (error) { 
+      if (error.name === 'ValidationError') {
+      error.inner.forEach((e) => {
+        actions.setFieldError(e.path, e.message);
+      });
+    } else {
+      // Handle other API call errors
+      Alert.alert('Registration Error', 'An error occurred during registration. Please try again.');
+      console.error('Registration Error:', error);
+      console.log(api)
+    } 
+      
+      Alert.alert('Registration Error', 'An error occurred during registration. Please try again.');
       console.log('Form validation failed');
+    }
+    finally {
+      setIsRegistering(false); // Registration process finished
     }
   };
 
@@ -299,16 +347,29 @@ const RegistrationScreenClient = ({navigation}) => {
                   />
                 
 
-                <TouchableOpacity
+                {isRegistering ? (
+                  <TouchableOpacity
                   style={[
                     styles.signUpButton,
-                    !isValid ||!termsChecked ? styles.disabledButton : null,
+                    !isValid || !termsChecked ? styles.disabledButton : null,
                   ]}
                   onPress={handleSubmit}
                   disabled={!isValid || !termsChecked}
                 >
-                  <Text style={styles.signUpButtonText}>Sign Up</Text>
-                </TouchableOpacity>
+                      <ActivityIndicator size="large" color="#fff" />
+                      </TouchableOpacity>
+                    ) : (
+                      <TouchableOpacity
+                        style={[
+                          styles.signUpButton,
+                          !isValid || !termsChecked ? styles.disabledButton : null,
+                        ]}
+                        onPress={handleSubmit}
+                        disabled={!isValid || !termsChecked}
+                      >
+                        <Text style={styles.signUpButtonText}>Sign Up</Text>
+                      </TouchableOpacity>
+                    )}
               </View>
             )}
           </Formik>
@@ -339,6 +400,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 24,
     paddingLeft:0,
+    fontFamily: 'Manrope-Bold',
   },
   form: {
     width: '100%',
@@ -353,6 +415,7 @@ const styles = StyleSheet.create({
     marginTop:10,
     fontSize: 14,
     color:'#1A1A1A',
+    fontFamily: 'Manrope-Regular',
   },
 
   labelPassword: {
@@ -361,6 +424,7 @@ const styles = StyleSheet.create({
     marginTop:10,
     fontSize: 14,
     color:'#1A1A1A',
+    fontFamily: 'Manrope-Regular',
   },
   
   input:{
@@ -383,9 +447,11 @@ const styles = StyleSheet.create({
     height: 50,
     marginBottom:16,
   },
+  
   signUpButtonText: {
     color: 'white',
     fontWeight: 'bold',
+    fontFamily: 'Manrope-Medium',
   },
 
   activeInput: {
@@ -438,6 +504,7 @@ const styles = StyleSheet.create({
     alignSelf:'center',
     fontSize:16,
     marginBottom:49,
+    fontFamily: 'Manrope-Medium',
 
   },
   signupRedirect:{
