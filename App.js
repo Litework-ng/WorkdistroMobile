@@ -1,43 +1,36 @@
 // App.js
-import { NavigationContainer } from '@react-navigation/native';
-import AppNavigator from './src/components/AppNavigator';
-import BottomTabNavigator from './src/components/BottomTabNavigator';
-import CustomBottomNavBar from './src/components/CustomNavBar';
-import * as SplashScreen from 'expo-splash-screen';
-import { UserProvider } from './src/components/UserContext';
-import AppLoading from 'expo-app-loading';
-import * as Font from 'expo-font';
-import React, { useEffect, useRef, useState } from 'react';
-import IdleTimerManager from 'react-native-idle-timer';
-import { UserActivityProvider } from './src/components/UserContext';
-import { useUserContext } from './src/components/UserContext';
+import { NavigationContainer } from "@react-navigation/native";
+import AppNavigator from "./src/components/AppNavigator";
+import BottomTabNavigator from "./src/components/BottomTabNavigator";
+import CustomBottomNavBar from "./src/components/CustomNavBar";
+import * as SplashScreen from "expo-splash-screen";
+import { UserProvider } from "./src/components/UserContext";
+import AppLoading from "expo-app-loading";
+import * as Font from "expo-font";
+import React, { useEffect, useRef, useState } from "react";
+import IdleTimerManager from "react-native-idle-timer";
+import { UserActivityProvider } from "./src/components/UserContext";
+import { useUserContext } from "./src/components/UserContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-
-
+AsyncStorage.clear();
 
 const fetchFonts = () => {
   return Font.loadAsync({
-    'Manrope-Regular': require('./assets/fonts/Manrope-Regular.ttf'),
-    'Manrope-Bold': require('./assets/fonts/Manrope-Bold.ttf'),
-    'MAnrope-ExtraBold': require('./assets/fonts/Manrope-ExtraBold.ttf'),
-    'Manrope-ExtraLight': require('./assets/fonts/Manrope-ExtraLight.ttf'),
-    'Manrope-Light': require('./assets/fonts/Manrope-Light.ttf'),
-    'Manrope-SemiBold': require('./assets/fonts/Manrope-SemiBold.ttf'),
-    'Manrope-Medium': require('./assets/fonts/Manrope-Medium.ttf'),
+    "Manrope-Regular": require("./assets/fonts/Manrope-Regular.ttf"),
+    "Manrope-Bold": require("./assets/fonts/Manrope-Bold.ttf"),
+    "MAnrope-ExtraBold": require("./assets/fonts/Manrope-ExtraBold.ttf"),
+    "Manrope-ExtraLight": require("./assets/fonts/Manrope-ExtraLight.ttf"),
+    "Manrope-Light": require("./assets/fonts/Manrope-Light.ttf"),
+    "Manrope-SemiBold": require("./assets/fonts/Manrope-SemiBold.ttf"),
+    "Manrope-Medium": require("./assets/fonts/Manrope-Medium.ttf"),
   });
 };
 
-
 const TIMEOUT_DURATION = 300000;
 
-const App = ({navigation, state}) => {
+const App = ({ navigation, state }) => {
   const [dataLoaded, setDataLoaded] = useState(false);
-  
- 
-
-
-
-
 
   useEffect(() => {
     const prepareData = async () => {
@@ -65,16 +58,12 @@ const App = ({navigation, state}) => {
     return <AppLoading />;
   }
 
-
-  
   return (
     <UserProvider>
       <UserActivityProvider>
-    <NavigationContainer>
-
-      <AppNavigator />
-      
-    </NavigationContainer>
+        <NavigationContainer>
+          <AppNavigator />
+        </NavigationContainer>
       </UserActivityProvider>
     </UserProvider>
   );
