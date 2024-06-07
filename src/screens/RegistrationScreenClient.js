@@ -66,7 +66,7 @@ const RegistrationScreenClient = ({navigation}) => {
     try {
       // Perform your registration logic here
       await AsyncStorage.setItem('hasRegistered', 'true');
-      navigation.navigate('Login');
+      
     } catch (error) {
       console.error('Failed to complete registration', error);
     }

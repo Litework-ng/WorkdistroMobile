@@ -184,15 +184,15 @@ if (loading) {
 
 
   return (
-    <Stack.Navigator initialRouteName={initialRoute} screenOptions={{headerShown:false}}>
-      <Stack.Screen name="BottomTabs" component={BottomTabsWrapper}  />
+    <Stack.Navigator screenOptions={{headerShown:false}}>
       <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+      <Stack.Screen name='Login' component={NavigateLogin}/>
+      <Stack.Screen name="BottomTabs" component={BottomTabsWrapper}  />
+      <Stack.Screen name= "OtpWorkerScreen" component={OtpVerificationWorkerScreen}/>
       <Stack.Screen name="JobSelectionModal" component={JobSelectionModal} options={{ headerShown: false }} />
       <Stack.Screen name="SignUpClient" component={RegistrationScreenClient} />
       <Stack.Screen name="SignUpWorker" component={RegistrationScreenWorker} />
       <Stack.Screen name="OtpScreen" component={OtpScreen} />
-      <Stack.Screen name= "OtpWorkerScreen" component={OtpVerificationWorkerScreen}/>
-      <Stack.Screen name='Login' component={NavigateLogin}/>
       <Stack.Screen name='ForgotPwd' component={ForgotPwdScreen}/>
       <Stack.Screen name='ResetPwd' component={ResetPwdScreen}/>
       <Stack.Screen name='MultiStepForm' component={MultiStepForm}/>
