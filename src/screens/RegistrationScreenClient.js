@@ -21,6 +21,7 @@ import { Eye, EyeSlash } from "iconsax-react-native";
 import api from "../components/Api";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import CustomCheckbox from "../components/CustomCheckBox";
 import { Platform } from "react-native";
 
 const RegistrationScreenClient = ({ navigation }) => {
@@ -110,9 +111,10 @@ const RegistrationScreenClient = ({ navigation }) => {
       if (response.data.response) {
         // Navigate to the OTP screen or any other screen
 
-        const phoneNumber = response.data.user.phone_number;
+        const email = response.data.user.email;
         await AsyncStorage.setItem("token", response.data.access_token);
-        await AsyncStorage.setItem("phoneNumber", phoneNumber);
+        await AsyncStorage.setItem("email", email);
+        await uploadJobSelection( response.data.access_token);
         completeRegistration();
         navigation.navigate("OtpScreen");
         // console.log("Sign up button pressed");
@@ -149,6 +151,25 @@ const RegistrationScreenClient = ({ navigation }) => {
       setIsRegistering(false); // Registration process finished
     }
   };
+
+  const uploadJobSelection = async (token) => {
+    try {
+      const selectedJob = await AsyncStorage.getItem('selectedJobAsync');
+      if (selectedJob) {
+        const job = JSON.parse(selectedJob);
+        await api.post('service/', { s_id: job.id }, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        await AsyncStorage.removeItem('selectedJob'); // Clean up after uploading
+      }
+    } catch (error) {
+      console.error('Failed to upload job selection:', error);
+    }
+  };
+
+
 
   const [fullNameFocused, setFullNameFocused] = React.useState(false);
   const [emailFocused, setEmailFocused] = React.useState(false);
@@ -376,19 +397,14 @@ const RegistrationScreenClient = ({ navigation }) => {
                     </Text>
                   )}
                 </View>
+                    <View style={styles.checkboxContainer}>
 
-                <CheckBoxForm
-                  style={styles.checkboxContainer}
-                  iconSize={12}
-                  iconColor="#000"
-                  textStyle={{ fontSize: 12 }}
-                  onChecked={handleTermsCheck}
-                  disabled="true"
-                  itemCheckedKey="RNchecked"
-                  dataSource={data}
-                  d
-                  renderItem={(item) => <CheckBox label={item.label} />}
-                />
+                <CustomCheckbox
+                    label="By signig up you agree to our terms and conditions."
+                    checked={termsChecked}
+                    onChange={setTermsChecked}
+                  />
+                    </View>
 
                 {isRegistering ? (
                   <TouchableOpacity
@@ -542,6 +558,7 @@ const styles = StyleSheet.create({
   checkboxContainer: {
     marginBottom: 42,
     marginTop: 0,
+    paddingHorizontal:20,
     width: 341,
     fontSize: 12,
   },

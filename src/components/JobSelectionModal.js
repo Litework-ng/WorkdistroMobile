@@ -76,38 +76,19 @@ const JobSelectionModal = ({ navigation }) => {
       { cancelable: false }
     );
   };
-
   const confirmJobSelection = async (job) => {
-    console.log(job.id, "id");
-    setLoading(true);
     try {
-      // Get the user token from AsyncStorage
-      const token = await AsyncStorage.getItem("token");
-      console.log(token, "token");
-      // Assuming the API endpoint is /api/register-job
-      const response = await api.post(
-        "service/",
-        { s_id: job.id }, // Sending job ID
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (response.data.success) {
-        // Navigate to the login screen on successful job registration
-        navigation.goBack();
-      } else {
-        Alert.alert("Error", "Failed to register job. Please try again.");
-      }
+      // Store the selected job locally
+      await AsyncStorage.setItem('selectedJobAsync', JSON.stringify(job));
+      // Proceed to registration or login
+      navigation.goBack();
     } catch (error) {
-      console.error("Error registering job:", error);
-      Alert.alert("Error", "An error occurred while registering the job.");
-    } finally {
-      setLoading(false);
+      console.error('Failed to store job selection:', error);
     }
   };
+
+
+ 
 
   return (
     <View style={styles.container}>

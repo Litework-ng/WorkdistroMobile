@@ -8,7 +8,7 @@ import {DollarSquare, Location} from 'iconsax-react-native';
 const ReviewScreen =({onPrev,StepIndicator, step, navigation})=>{
     const handlePost =()=>{
         console.log('Job Posted');
-        navigation.navigate('Main')
+        navigation.navigate('BottomTabs')
         
     }
     return(

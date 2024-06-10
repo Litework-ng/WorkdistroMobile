@@ -77,12 +77,11 @@ const OnboardingSlides = ({ navigation }) => {
       await AsyncStorage.setItem("hasOnboarded", "true");
 
       // Conditionally navigate based on user selection
-      if (userType === "becomeWorker" && selectedJob) {
+      if (userType === "becomeWorker" ) {
         navigation.navigate("SignUpWorker");
       } else if (userType === "findWorker") {
         navigation.navigate("SignUpClient");
-      } else if (userType === "becomeWoker" || !selectedJob) {
-        Alert.alert("Error", "Please select a job before continuing.");
+      
       }
       console.log("pressed UserSelect");
 
@@ -158,9 +157,7 @@ const OnboardingSlides = ({ navigation }) => {
               style={[
                 styles.getStartedButton,
                 !selectedUserType && styles.disabledButton,
-                selectedUserType === "becomeWorker" &&
-                  !selectedJob &&
-                  styles.disabledButton,
+               
               ]}
               onPress={() => handleGetStarted(selectedUserType)}
               disabled={!selectedUserType}
