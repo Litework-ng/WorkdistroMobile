@@ -1,15 +1,14 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, KeyboardAvoidingView, ScrollView, } from "react-native";
+import { View, Text, Modal, ActivityIndicator,TouchableOpacity, StyleSheet, TextInput, KeyboardAvoidingView, ScrollView, } from "react-native";
 import { faChevronLeft, faDollarSign, faLocationDot ,} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon,  } from '@fortawesome/react-native-fontawesome';
 import {DollarSquare, Location} from 'iconsax-react-native';
+import Button from '../components/Button';
 
-
-const ReviewScreen =({onPrev,StepIndicator, step, navigation})=>{
-    const handlePost =()=>{
-        console.log('Job Posted');
-        navigation.navigate('BottomTabs')
-        
+const ReviewScreen =({onPrev,success,StepIndicator,loading, step, navigation, jobDetails, onSubmit})=>{
+    const handleSuccessModalClose =()=>{
+        setSuccess(false);
+      navigation.navigate('Task');
     }
     return(
         <View  style={{backgroundColor:'#ffffff', padding:20,}}> 
@@ -23,23 +22,32 @@ const ReviewScreen =({onPrev,StepIndicator, step, navigation})=>{
       <StepIndicator step={step} />
       <Text style={styles.postText}>Your Job Post</Text>
       <Text style={styles.postInfoText}>This is a review of your job post. You can go back to edit.</Text>
-      <Text style={styles.postTitle}>Laundry</Text>
-      <Text style={styles.postDescription}>Lorem ipsum dolor sit amet consectetur. Commodo fames viverra est eget nec feugiat augue semper dolor.</Text>
+      <Text style={styles.postTitle}>{jobDetails.serviceName}</Text>
+      <Text style={styles.postDescription}>{jobDetails.description}</Text>
       <View style={styles.detailsContainer}>
         <View style={styles.itemDetailsContainer}>
             <Location size={16} color='#7E7E7E'/>
-            <Text style={styles.locationText}>Ikorodu, Lagos</Text>
+            <Text style={styles.locationText}>{jobDetails.location}</Text>
         </View>
         <View style={styles.itemDetailsContainer}> 
             <DollarSquare size={16} color='#7E7E7E'/>
-            <Text style={styles.paymentText}>Wallet</Text>
+            <Text style={styles.paymentText}>{jobDetails.paymentMethod}</Text>
         </View>
 
 
       </View>
-      <Text style={styles.budgetText}>Budget: N6,000</Text>
+      <Text style={styles.budgetText}>Budget: {jobDetails.budget}</Text>
+      <Modal transparent={true} visible={loading} style={styles.modalStyles}>
+        <View style={styles.modalContainer}>
+          <ActivityIndicator size="large" color='#1F2A47' />
+          <Text>Loading...</Text>
+        </View>
+      </Modal>
       
-                  <TouchableOpacity onPress={handlePost} style={styles.postButton}>
+      {/* Success Modal */}
+      
+      
+                  <TouchableOpacity onPress={onSubmit} style={styles.postButton}>
                     <Text style={styles.nextButtonText}>Post Job</Text>
                 </TouchableOpacity>
         </View>
@@ -109,6 +117,7 @@ const styles = StyleSheet.create({
         color:'#7E7E7E',
         alignSelf:'center',
         fontWeight:'400',
+        width:200
     }, 
     budgetText:{
         marginTop:18,
@@ -131,7 +140,18 @@ const styles = StyleSheet.create({
     nextButtonText:{
         color: 'white',
         fontWeight: 'bold',
-    }
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        height:100,
+        width:100,
+      },
+      modalStyles:{
+        alignItems:'center'
+      }
 });
 
 export default ReviewScreen;

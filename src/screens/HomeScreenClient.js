@@ -1,32 +1,67 @@
-// HomeScreen.js
+ // HomeScreen.js
 
-import React from 'react';
-import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, ScrollView, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import { View, Text, StyleSheet, Alert, FlatList, TextInput, Image, TouchableOpacity, ScrollView, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import {SearchNormal1 } from 'iconsax-react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = ({ navigation }) => {
+  const [services, setServices] = useState([]);
+  const [filteredServices, setFilteredServices] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
     const ServiceItem = ({ label, image, onPress }) => (
-        <TouchableOpacity onPress={onPress}>
+        <TouchableOpacity onPress={() => onPress(label)}>
           <View style={styles.serviceItem}>
             <Image source={image} style={styles.serviceItemImage} />
             <Text style={styles.serviceItemLabel}>{label}</Text>
           </View>
         </TouchableOpacity>
       );
+    const handleSearch = (text) => {
+    setSearchQuery(text); // Update search input state
+    if (text.length === 0) {
+      setFilteredServices([]);
+    } else {
+      const filtered = services.filter((service) =>
+        service.name && service.name.toLowerCase().includes(text.toLowerCase())
+      );
+      setFilteredServices(filtered);
+    }
+  };  
 
       const handleSearchBlur = () => {
         // Dismiss the keyboard when the search input loses focus
         Keyboard.dismiss();
       };
 
-      const handleServiceItemClick = () => {
+      const handleServiceItemClick = (service) => {
         // Navigate to the MultiStepForm screen
-        console.log('pressing click')
-        navigation.navigate('MultiStepForm');
+        setSearchQuery('');
+        navigation.navigate('MultiStepForm', { service});
       };
+
+      useEffect(() => {
+        const fetchServices = async () => {
+          try {
+            const servicesData = await AsyncStorage.getItem('services');
+            if (servicesData) {
+              const services = JSON.parse(servicesData);
+              setServices(services);
+              setFilteredServices(services);
+              
+            }
+          } catch (error) {
+            console.error('Error retrieving services from storage:', error);
+            Alert.alert('Error', 'Failed to retrieve services. Please check your network connection and try again.', [{ text: 'OK' }]);
+          }
+        };
+    
+        fetchServices();
+      }, []);
+    
       
   return (
     <TouchableWithoutFeedback onPress={handleSearchBlur}>
@@ -40,14 +75,31 @@ const HomeScreen = ({ navigation }) => {
             <Text style={styles.welcomeText}>Hello Tee</Text>
                 <View style={styles.searchContainer}>
             <TextInput
+                value={searchQuery}
                 style={styles.searchInput}
                 placeholder="What type of help do you need?"
                 onBlur={() => {
                     handleSearchBlur()
                   }}
+                  onChangeText={handleSearch}
             />
             <SearchNormal1 size={24} color="#292D32" style={styles.searchIcon} />
-            </View> 
+           
+            </View>
+            {searchQuery.length > 0 && filteredServices.length > 0 && (
+            <View>
+
+            <FlatList
+                  data={filteredServices}
+                  keyExtractor={(item) => item.id.toString()}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity style={styles.serviceSearchItem} onPress={() => handleServiceItemClick(item)}>
+                      <Text>{item.name}</Text>
+                    </TouchableOpacity>
+                  )}
+                /> 
+            </View>
+            )}
                     <View style={styles.servicesContainer}>
                         <View style={styles.ManaulRequestcontainer}>
                             <Text style={styles.servicesTitle}>Popular Tasks</Text>
@@ -213,6 +265,11 @@ const styles = StyleSheet.create({
         color: '#333333',
         height:40,
         fontFamily: 'Manrope-Regular',
+      },
+      serviceSearchItem:{
+        padding: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: "#ccc",
       },
       servicesGrid:{
         flexDirection:'row',

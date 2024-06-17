@@ -12,7 +12,7 @@ import Button from '../components/Button';
 
 
   
-const PaymentScreen =({ onNext, StepIndicator, step, navigation, onPrev })=>{
+const PaymentScreen =({onChange, jobDetails, onNext, StepIndicator, step, navigation, onPrev })=>{
 
     const [budget, setBudget] = React.useState('');
     const [paymentMethod, setPaymentMethod] = React.useState('wallet');
@@ -24,8 +24,8 @@ const PaymentScreen =({ onNext, StepIndicator, step, navigation, onPrev })=>{
       setBudget(value);
     };
     const handlePaymentMethodChange = (method) => {
-        setPaymentMethod(method);
-      };
+      onChange('paymentMethod', method);
+    };
     
       const handleLocationChange = (value) => {
         setLocation(value);
@@ -66,20 +66,20 @@ const PaymentScreen =({ onNext, StepIndicator, step, navigation, onPrev })=>{
         style={{  borderColor: 'gray', borderWidth: 1,borderRadius:4, borderColor:'#6B6B6B', marginBottom: 20, width:335, height:50, paddingHorizontal:20,}}
         keyboardType="numeric"
         placeholder="5000"
-        value={budget}
-        onChangeText={handleBudgetChange}
+        onChangeText={(text) => onChange('budget', text)}
+        value={jobDetails.budget}
       />
        <Text style={{marginTop:32, marginBottom:6.5,}}>Payment Method</Text>
        <View style={{flexDirection:'row', gap:64,}}>
 
        <CustomRadioButton
         label="Wallet"
-        checked={paymentMethod === 'wallet'}
+        checked={jobDetails.paymentMethod === 'wallet'}
         onPress={() => handlePaymentMethodChange('wallet')}
       />
       <CustomRadioButton
         label="Cash"
-        checked={paymentMethod === 'cash'}
+        checked={jobDetails.paymentMethod === 'cash'}
         onPress={() => handlePaymentMethodChange('cash')}
       />
        </View>
@@ -89,8 +89,8 @@ const PaymentScreen =({ onNext, StepIndicator, step, navigation, onPrev })=>{
       <TextInput
         style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 5, borderRadius:4, paddingHorizontal:20, marginTop:5, height:50, }}
         placeholder="12, Lagos Street, Lagos, Nigeria"
-        value={location}
-        onChangeText={handleLocationChange}
+        onChangeText={(text) => onChange('location', text)}
+        value={jobDetails.location}
       />
        </View>
        <CheckBoxForm style={styles.checkboxContainer}

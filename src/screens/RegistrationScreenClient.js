@@ -112,10 +112,14 @@ const RegistrationScreenClient = ({ navigation }) => {
         // Navigate to the OTP screen or any other screen
 
         const email = response.data.user.email;
+        
         await AsyncStorage.setItem("token", response.data.access_token);
+        await AsyncStorage.setItem("refreshToken", response.data.refresh_token);
+
         await AsyncStorage.setItem("email", email);
         await uploadJobSelection( response.data.access_token);
         completeRegistration();
+        console.log(response.data)
         navigation.navigate("OtpScreen");
         // console.log("Sign up button pressed");
       } else {

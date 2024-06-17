@@ -1,5 +1,6 @@
 // Import necessary components and functions
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Text } from 'react-native';
 import OnboardingScreen from '../screens/OnBoardingScreen';
 import RegistrationScreenWorker from '../screens/RegistrationScreenWorker';
 import RegistrationScreenClient from '../screens/RegistrationScreenClient';
@@ -48,6 +49,7 @@ import { ActivityIndicator, View } from 'react-native';
 // Create a stack navigator
 const Stack = createNativeStackNavigator();
 const TIMEOUT_DURATION = 300000;
+const MAX_RETRIES = 3;
 
 
 
@@ -62,7 +64,8 @@ const AppNavigator = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [service, setServices] = useState([]);
   const [error, setError] = useState();
-  const [initialRoute, setInitialRoute] = useState(null);
+  const [initialRoute, setInitialRoute] = useState(null)
+  const [retryCount, setRetryCount] = useState(0);
   const [loading, setLoading] = useState(false)
   
   useEffect(() => {
@@ -74,33 +77,46 @@ const AppNavigator = () => {
         console.log(servicesData);
       } catch (error) {
         console.error('Error fetching services:', error);
-        Alert.alert(
-          'Error',
-          'Failed to fetch services. Please check your network connection and try again.',
-          [{ text: 'OK' }]
-        );
+        if (retryCount < MAX_RETRIES) {
+          setRetryCount(retryCount + 1);
+        } else {
+          setError('Failed to fetch services. Please check your network connection and try again.');
+          Alert.alert(
+            'Error',
+            'Failed to fetch services. Please check your network connection and try again.',
+            [{ text: 'OK', onPress: retryFetch }]
+          );
+        }
       }
     };
 
-  
-
-
     const checkOnboardingStatus = async () => {
-      setLoading(true);
       try {
         const hasOnboarded = await AsyncStorage.getItem('hasOnboarded');
+        console.log(hasOnboarded)
         setInitialRoute(hasOnboarded ? 'Login' : 'Onboarding');
       } catch (error) {
         console.error('Failed to check onboarding status from storage', error);
         setInitialRoute('Onboarding');
-      } finally {
-        setLoading(false);
       }
     };
 
-    fetchAndStoreServices();
-    checkOnboardingStatus();
-  }, []);
+    const initializeApp = async () => {
+      setLoading(true);
+      await fetchAndStoreServices();
+      await checkOnboardingStatus();
+      setLoading(false);
+    };
+
+    initializeApp();
+  }, [retryCount]);
+
+  const retryFetch = () => {
+    setLoading(true);
+    setRetryCount(0);
+    setError(null);
+  };
+
 
 
 
@@ -178,6 +194,7 @@ if (loading) {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <ActivityIndicator size="large" />
+      <Text>Loading...</Text>
     </View>
   );
 }
