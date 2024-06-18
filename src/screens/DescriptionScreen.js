@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet,ScrollView } from 'react-native';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
@@ -9,7 +9,7 @@ import CustomBottomNavBar from '../components/CustomNavBar';
 import Button from '../components/Button';
 
 
-const DescriptionForm = ({ onNext, StepIndicator, step, navigation, }) => {
+const DescriptionForm = ({ onNext, route, StepIndicator, step, navigation,  jobDetails, onChange, }) => {
   const [subject, setSubject] = useState('');
   const [description, setDescription] = useState('');
   const [selectedValue, setSelectedValue] = useState(null);
@@ -19,6 +19,7 @@ const DescriptionForm = ({ onNext, StepIndicator, step, navigation, }) => {
     { label: 'Grocery Shopping', value: 'Grocery Shopping' },
     { label: 'Bill Payments', value: 'Bill Payments' },
   ];
+
 
 
   const handleDropdownChange = (value) => {
@@ -49,10 +50,11 @@ const DescriptionForm = ({ onNext, StepIndicator, step, navigation, }) => {
       <StepIndicator step={step} />
       <View>
         <Text style={styles.dropDownLabel}>Subject</Text>
-       <DropdownInput
-        
-        items={dropdownItems}
-        onValueChange={handleDropdownChange}
+        <TextInput
+        style={styles.subjectInput}
+        value={jobDetails.serviceName}
+        editable={false}
+      
       />
       </View>
 
@@ -61,10 +63,10 @@ const DescriptionForm = ({ onNext, StepIndicator, step, navigation, }) => {
         <Text style={styles.descriptionInputLabel}>Description</Text>
         <TextInput
           multiline
-          onChangeText={(inputText) => setText(inputText)}
           style={styles.descriptionInput}
           placeholder='Please give a full description of the task'
-          value={text}
+          onChangeText={(text) => onChange('description', text)}
+          value={jobDetails.description}
           maxLength={maxLength}
         />
         
@@ -123,6 +125,19 @@ const styles = StyleSheet.create({
         color:'#B9B9B9',
         fontSize:14,
         marginBottom:40,
+    },
+
+    subjectInput:{
+      fontSize: 14,
+      fontWeight:'400',
+      paddingHorizontal: 10,
+      paddingVertical: 10,
+      borderWidth: 0.5,
+      borderColor: '#6B6B6B',
+      borderRadius: 8,
+      color: 'black',
+      paddingRight: 30,
+      marginBottom:20,
     },
 
     nextButton:{

@@ -16,7 +16,15 @@ import { RadioButton } from "react-native-paper";
 import CustomRadioButton from "../components/CustomRadioButton";
 import Button from "../components/Button";
 
-const PaymentScreen = ({ onNext, StepIndicator, step, navigation, onPrev }) => {
+const PaymentScreen = ({
+  onChange,
+  jobDetails,
+  onNext,
+  StepIndicator,
+  step,
+  navigation,
+  onPrev,
+}) => {
   const [budget, setBudget] = React.useState("");
   const [paymentMethod, setPaymentMethod] = React.useState("wallet");
   const [location, setLocation] = React.useState("");
@@ -26,7 +34,7 @@ const PaymentScreen = ({ onNext, StepIndicator, step, navigation, onPrev }) => {
     setBudget(value);
   };
   const handlePaymentMethodChange = (method) => {
-    setPaymentMethod(method);
+    onChange("paymentMethod", method);
   };
 
   const handleLocationChange = (value) => {
@@ -75,19 +83,19 @@ const PaymentScreen = ({ onNext, StepIndicator, step, navigation, onPrev }) => {
           }}
           keyboardType="numeric"
           placeholder="5000"
-          value={budget}
-          onChangeText={handleBudgetChange}
+          onChangeText={(text) => onChange("budget", text)}
+          value={jobDetails.budget}
         />
         <Text style={{ marginTop: 32, marginBottom: 6.5 }}>Payment Method</Text>
         <View style={{ flexDirection: "row", gap: 64 }}>
           <CustomRadioButton
             label="Wallet"
-            checked={paymentMethod === "wallet"}
+            checked={jobDetails.paymentMethod === "wallet"}
             onPress={() => handlePaymentMethodChange("wallet")}
           />
           <CustomRadioButton
             label="Cash"
-            checked={paymentMethod === "cash"}
+            checked={jobDetails.paymentMethod === "cash"}
             onPress={() => handlePaymentMethodChange("cash")}
           />
         </View>
@@ -105,8 +113,8 @@ const PaymentScreen = ({ onNext, StepIndicator, step, navigation, onPrev }) => {
               height: 50,
             }}
             placeholder="12, Lagos Street, Lagos, Nigeria"
-            value={location}
-            onChangeText={handleLocationChange}
+            onChangeText={(text) => onChange("location", text)}
+            value={jobDetails.location}
           />
         </View>
         <CheckBoxForm

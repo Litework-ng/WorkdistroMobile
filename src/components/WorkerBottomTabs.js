@@ -47,7 +47,7 @@ const WorkerBottomTabs = ({component, onpress}) => {
         
       />
       <Tab.Screen
-        name="Task"
+        name="Taskwoker"
         component={WorkerTaskScreen}
         options={{
           tabBarIcon: ({ color }) => <Briefcase  color={color} size={24} />,

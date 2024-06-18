@@ -23,7 +23,7 @@ import api from "../components/Api";
 import { Platform } from "react-native";
 import { Checkbox } from "react-native-paper";
 import CheckboxForm from "react-native-checkbox-form";
-
+import CustomCheckbox from "../components/CustomCheckBox";
 const LoginScreen = ({ navigation }) => {
   console.log("sugar");
   const [errors, setErrors] = useState({
@@ -44,7 +44,6 @@ const LoginScreen = ({ navigation }) => {
   const [termsChecked, setTermsChecked] = useState(false);
   const [isLogging, setIsLogging] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
-  const [rememberPassword, setRememberPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
@@ -136,6 +135,7 @@ const LoginScreen = ({ navigation }) => {
   const [phoneNumberFocused, setPhoneNumberFocused] = React.useState(false);
   const [passwordFocused, setPasswordFocused] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
+  const [rememberPassword, setRememberPassword] = useState(false);
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -293,19 +293,10 @@ const LoginScreen = ({ navigation }) => {
                   )}
                 </View>
                 <View style={styles.userAccessContaineer}>
-                  <CheckboxForm
-                    style={styles.checkboxContainer}
-                    iconSize={12}
-                    iconColor="#000"
-                    textStyle={{
-                      fontSize: 12,
-                      color: "#1F2A47",
-                      fontFamily: "Manrope-Regular",
-                    }}
-                    onChecked={handleTermsCheck}
-                    itemCheckedKey="RNchecked"
-                    dataSource={data}
-                    renderItem={(item) => <CheckBox label={item.label} />}
+                <CustomCheckbox
+                    label="Remember Password"
+                    checked={rememberPassword}
+                    onChange={setRememberPassword}
                   />
                   <TouchableOpacity
                     style={styles.forgotPasswordContainer}

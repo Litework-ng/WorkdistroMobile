@@ -21,14 +21,14 @@ const OtpVerificationWorkerScreen = ({ navigation }) => {
   const [verifyingOtp, setVerifyingOtp] = useState(false);
   const inputRefs = useRef([...Array(4)].map(() => React.createRef()));
   const expectedOtp = "1234";
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
-    const getPhoneNumber = async () => {
+    const getEmail = async () => {
       try {
-        const storedPhoneNumber = await AsyncStorage.getItem("phoneNumber");
-        if (storedPhoneNumber !== null) {
-          setPhoneNumber(storedPhoneNumber);
+        const storedEmail = await AsyncStorage.getItem("email");
+        if (storedEmail !== null) {
+          setEmail(storedEmail);
         }
       } catch (error) {
         console.error(
@@ -38,7 +38,7 @@ const OtpVerificationWorkerScreen = ({ navigation }) => {
       }
     };
 
-    getPhoneNumber();
+    getEmail();
   }, []);
 
   const verifyOtp = async (enteredOtp) => {
@@ -137,7 +137,7 @@ const OtpVerificationWorkerScreen = ({ navigation }) => {
         <Text style={styles.headerText}>Verification</Text>
       </View>
       <Text style={styles.verificationInstruction}>
-        Please input the verification code sent to {phoneNumber}{" "}
+        Please input the verification code sent to {email}{" "}
         <TouchableOpacity>
           <Text style={styles.changeNumber}> Change</Text>
         </TouchableOpacity>
