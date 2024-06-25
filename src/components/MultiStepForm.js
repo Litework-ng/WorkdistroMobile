@@ -89,11 +89,6 @@ const MultiStepForm = ({navigation, route}) => {
         setSuccess(true);
         navigation.navigate('Task');
       } catch (error) {
-        console.log(jobDetails.serviceName)
-        console.log(jobDetails.serviceId)
-        console.log(jobDetails.budget)
-        console.log(jobDetails.location)
-        console.log(jobDetails.description)
         console.error('Error posting job:', error);
         alert('Failed to post job. Please try again later.');
       }

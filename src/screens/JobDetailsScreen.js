@@ -1,39 +1,105 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, StyleSheet } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import {  faChevronLeft, faLocationDot, faDollarSign} from '@fortawesome/free-solid-svg-icons';
 import Button from '../components/Button';
+import { DollarSquare, Location, ArrowLeft2 } from "iconsax-react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from '../components/Api';
+import LoadingOverlay from '../components/Loading';
+import SuccessModal from '../components/SuccessModal';
+import ErrorModal from '../components/ErrorModal';
 
 
-const JobDetailsScreen = ()=>{
+const JobDetailsScreen = ({ route,navigation})=>{
+    const { job, bid, coverLetter } = route.params;
+    const [loading, setLoading] = useState(false);
+    const [successVisible, setSuccessVisible] = useState(false);
+    const [errorVisible, setErrorVisible] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const handleBidSubmit = async () => {
+        if (!bid || !coverLetter) {
+            Alert.alert('Error', 'Please fill in both bid and cover letter fields.');
+            return;
+        }
+
+        try {
+            setLoading(true);
+            const token = await AsyncStorage.getItem('logintoken');
+            if (token) {
+                const response = await api.post(
+                    'worker/bid/', // Replace with your actual endpoint
+                    { job_id: job.id, cover_letter: coverLetter, bid: bid },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
+                setSuccessVisible(true); 
+            } else {
+                console.error('No token found');
+            }
+        } catch (error) {
+            if (error == "AxiosError: Request failed with status code 400") {
+                setErrorMessage("Empty fields or invalid details received. Please try again!");
+              } else if (error == "AxiosError: Request failed with status code 403") {
+                setErrorMessage("You have already placed a bid for this Job!");
+              } else{
+
+                  setErrorMessage('There was an error placing your bid. Please try again.');
+              }
+          setErrorVisible(true);
+      }
+      finally{
+          setLoading(false)
+      }
+        
+    };
+
     return(
         <View>
             <View style={styles.headerContainer}>
                 <TouchableOpacity  onPress={() => navigation.goBack()}>
-                    <FontAwesomeIcon icon={faChevronLeft} size={24}/>
+                <ArrowLeft2 size={24} color='#1A1A1A'/>
                 </TouchableOpacity>
                     <Text style={styles.headerText}>Job Details</Text>
             </View>
             <View style={styles.firstSection}>
-                <Text style={styles.postTitle}>Laundry</Text>
+                <Text style={styles.postTitle}>{job.subject}</Text>
                     <View  style={styles.detailsContainer}>
                         <View style={styles.itemDetailsContainer}>
-                            <FontAwesomeIcon icon={faLocationDot} size={16} color='#7E7E7E'/>
-                            <Text style={styles.locationText}>Ikorodu, Lagos</Text>
+                        <Location size={16} color="#7E7E7E" />
+                            <Text style={styles.locationText}>{job.location}</Text>
                         </View>
                         <View style={styles.itemDetailsContainer}>
-                            <FontAwesomeIcon icon={faDollarSign}size={16} color='#7E7E7E'/>
+                        <DollarSquare size={16} color="#7E7E7E" />
                             <Text style={styles.paymentText}>Wallet</Text>
                         </View>
                         
                     </View>
-                <Text style={styles.budgetText}>Budget: N6,000</Text>    
+                <Text style={styles.budgetText}>{job.budget}</Text>    
             </View>
             <View>
                 <Text  style={styles.descriptionText}>Description</Text>
-                <Text style={styles.descriptionContent}>Lorem ipsum dolor sit amet consectetur. Commodo fames viverra est eget nec feugiat augue semper dolor.</Text>
+                <Text style={styles.descriptionContent}>{job.description}</Text>
             </View>
-            <Button text='Bid'/>
+            <Button text='Bid' onPress={handleBidSubmit}/>
+            <LoadingOverlay visible={loading} />
+            <SuccessModal
+                        visible={successVisible}
+                        message="Your Bid Was Successful!"
+                        onClose={() => setSuccessVisible(false)}
+                        onConfirm={() => {
+                            setSuccessVisible(false);
+                            navigation.navigate('WorkerTask');  // Navigate to another screen on success
+                        }}
+                    />
+                    <ErrorModal
+                        visible={errorVisible}
+                        message={errorMessage}
+                        onClose={() => setErrorVisible(false)}
+                    />
         </View>
     )
 };
@@ -49,12 +115,13 @@ const styles = StyleSheet.create({
     headerText:{
       fontSize:16,
       fontWeight:'600',
+      fontFamily: 'Manrope-Bold',
       
     },
     detailsContainer:{
         flexDirection:'row',
         gap:32,
-        marginTop:5,
+        marginTop:10,
         
         paddingLeft:20,
        
@@ -69,7 +136,7 @@ const styles = StyleSheet.create({
 
     firstSection:{
         borderBottomWidth:1,
-        borderColor:'#7E7E7E',
+        borderColor:'#E1E1E1',
         paddingBottom:20,
         marginBottom:20,
     },
@@ -77,14 +144,17 @@ const styles = StyleSheet.create({
     postTitle:{
         fontSize:14,
         fontWeight:'500',
+        fontFamily: 'Manrope-SemiBold',
         marginTop:20,
         paddingLeft:20,
     },
     paymentText:{
         fontSize:12,
+        fontFamily: 'Manrope-Regular',
         color:'#7E7E7E',
         alignSelf:'center',
         fontWeight:'400',
+        paddingLeft:5
         
     },
     locationText:{
@@ -92,11 +162,14 @@ const styles = StyleSheet.create({
         color:'#7E7E7E',
         alignSelf:'center',
         fontWeight:'400',
+        fontFamily: 'Manrope-Regular',
+        paddingLeft:5,
     }, 
     budgetText:{
         marginTop:18,
         fontSize:12,
         fontWeight:'500',
+        fontFamily: 'Manrope-Medium',
         paddingLeft:20,
     },
 
@@ -105,10 +178,12 @@ const styles = StyleSheet.create({
         fontSize:12,
         fontWeight:'500',
         paddingLeft:20,
+        fontFamily: 'Manrope-Medium',
     },
     
     descriptionContent:{
         fontSize:12,
+        fontFamily: 'Manrope-Regular',
         color:'#7E7E7E',
         alignSelf:'center',
         fontWeight:'400',

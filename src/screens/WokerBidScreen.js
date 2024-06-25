@@ -1,12 +1,24 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, TouchableOpacity, Text, TextInput, Keyboard, TouchableWithoutFeedback } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Text, Alert, TextInput, Keyboard,KeyboardAvoidingView, Platform, ScrollView, TouchableWithoutFeedback } from "react-native";
 import {  faChevronLeft, faAngleDown} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import Button from '../components/Button';
+import {ArrowLeft2 } from "iconsax-react-native";
+import api from '../components/Api'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import LoadingOverlay from '../components/Loading';
+import SuccessModal from '../components/SuccessModal';
+import ErrorModal from '../components/ErrorModal';
 
-const WorkerBidScreen = ({navigation}) => {
+
+const WorkerBidScreen = ({route,navigation}) => {
+    const { job } = route.params;
     const [bid, setBid] = useState(null);
     const [text, setText] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [successVisible, setSuccessVisible] = useState(false);
+    const [errorVisible, setErrorVisible] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
     const maxLength = 500;
     const handleBidChange = (value) => {
         setBid(value);
@@ -15,25 +27,67 @@ const WorkerBidScreen = ({navigation}) => {
         // Dismiss the keyboard
         Keyboard.dismiss();
       };
+
+      
+    const handleBidSubmit = async () => {
+        try {
+            setLoading(true);
+            const token = await AsyncStorage.getItem('logintoken');
+            if (token) {
+                const response = await api.post(
+                    'worker/bid/',
+                    { job_id: job.id, cover_letter: text, bid: bid },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
+               setSuccessVisible(true);
+            } else {
+                console.error('No token found');
+            }
+        } catch (error) {
+          
+
+              if (error == "AxiosError: Request failed with status code 400") {
+                  setErrorMessage("Empty fields or invalid details received. Please try again!");
+                } else if (error == "AxiosError: Request failed with status code 403") {
+                  setErrorMessage("You have already placed a bid for this Job!");
+                } else{
+
+                    setErrorMessage('There was an error placing your bid. Please try again.');
+                }
+            setErrorVisible(true);
+        }
+        finally{
+            setLoading(false)
+        }
+    };
+
     return(  
         <TouchableWithoutFeedback onPress={handleInputBlur}>
-
-        <View>
+                  <KeyboardAvoidingView
+                style={{ flex: 1 }}
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+            >
+        <ScrollView>
             <View style={styles.headerContainer}>
                 <TouchableOpacity  onPress={() => navigation.goBack()}>
-                    <FontAwesomeIcon icon={faChevronLeft} size={24}/>
+                    <ArrowLeft2 size={24} color='#1A1A1A'/>
                 </TouchableOpacity>
                     <Text style={styles.headerText}>Bid</Text>
             </View>
-            <Text style={styles.postTitle}>Laundry</Text>
-            <Text style={styles.postDescription}>Lorem ipsum dolor sit amet consectetur. Commodo fames viverra est eget nec feugiat augue semper dolor.</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('JobDetails')}>
-                <Text style={styles.fullDetails}>View Full Job</Text>
+       
+            <Text style={styles.postTitle}>{job.subject}</Text>
+                <Text style={styles.postDescription}>{job.description}</Text>        
+                <TouchableOpacity onPress={() => navigation.navigate('JobDetails', { job, bid, coverLetter: text })}>           
+                     <Text style={styles.fullDetails}>View Full Job</Text>
             </TouchableOpacity>
             <View>
                 <Text style={styles.bidInputLabel}>Bid</Text>
                 <TextInput
-                    style={{  borderColor: 'gray', borderWidth: 1,borderRadius:4, borderColor:'#6B6B6B', marginBottom: 20, width:335, height:50, paddingHorizontal:20, marginLeft:20,}}
+                    style={{  borderColor: 'gray', borderWidth: 1,borderRadius:4, borderColor:'#6B6B6B', marginBottom: 20, width:335, height:50, paddingHorizontal:20, marginLeft:20, fontFamily: 'Manrope-Regular',}}
                     keyboardType="numeric"
                     placeholder="5000"
                     value={bid}
@@ -54,8 +108,24 @@ const WorkerBidScreen = ({navigation}) => {
                 
                 <Text style={styles.characters}>{`${text.length}/500`}</Text>
             </View>
-            <Button text='Bid' onPress={()=>navigation.navigate('WorkerTask')}/> 
-        </View>
+            <Button text='Bid' onPress={handleBidSubmit}/> 
+            <LoadingOverlay visible={loading} />
+            <SuccessModal
+                        visible={successVisible}
+                        message="Your Bid Was Successful!"
+                        onClose={() => setSuccessVisible(false)}
+                        onConfirm={() => {
+                            setSuccessVisible(false);
+                            navigation.navigate('WorkerTask');  // Navigate to another screen on success
+                        }}
+                    />
+                    <ErrorModal
+                        visible={errorVisible}
+                        message={errorMessage}
+                        onClose={() => setErrorVisible(false)}
+                    />
+        </ScrollView>
+        </KeyboardAvoidingView>
         </TouchableWithoutFeedback>
     );
 };
@@ -73,19 +143,22 @@ const styles = StyleSheet.create({
     headerText:{
       fontSize:16,
       fontWeight:'600',
+      fontFamily: 'Manrope-SemiBold',
       
     },
     postTitle:{
         fontSize:14,
         fontWeight:'500',
+        fontFamily: 'Manrope-Medium',
         marginTop:20,
         paddingLeft:20,
     },
     postDescription:{
         fontSize:12,
         fontWeight:'400',
+        fontFamily: 'Manrope-Regular',
         color:'#7E7E7E',
-        width:303,
+        width:323,
         marginTop:5,
         paddingLeft:20,
         
@@ -94,6 +167,7 @@ const styles = StyleSheet.create({
         
             fontSize:10,
             fontWeight:'400',
+            fontFamily: 'Manrope-Medium',
             marginTop:10,
             marginBottom:20,
             textDecorationLine:'underline',
@@ -102,7 +176,7 @@ const styles = StyleSheet.create({
        
     },
     coverLetterInput:{
-        fontSize: 16,
+        fontSize: 14,
           paddingVertical: 12,
           paddingHorizontal: 10,
           borderWidth: 1,
@@ -116,6 +190,7 @@ const styles = StyleSheet.create({
           paddingTop:10,
           height:193,
           width:335, 
+          fontFamily: 'Manrope-Regular',
     },
 
     coverLetterInputLabel:{
@@ -123,6 +198,7 @@ const styles = StyleSheet.create({
         marginTop:5,
         marginBottom:5,
         paddingLeft:20,
+        fontFamily: 'Manrope-Regular',
     },
 
     characters:{
@@ -130,11 +206,13 @@ const styles = StyleSheet.create({
         fontSize:14,
         marginBottom:40,
         paddingLeft:20,
+        fontFamily: 'Manrope-Regular',
     },
     bidInputLabel:{
         color:'#525252',
         paddingLeft:20,
         marginBottom:5,
+        fontFamily: 'Manrope-Regular',
     },
 });
 
