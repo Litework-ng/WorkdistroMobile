@@ -13,8 +13,6 @@ const UploadPhotoInput = ({ label }) => {
   const [selectedImage, setSelectedImage] = useState(null);
 
   const pickImage = async () => {
-    console.log("mum");
-    return;
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -52,7 +50,9 @@ const UploadPhotoInput = ({ label }) => {
 
 const styles = StyleSheet.create({
   ImageInputContainer: {
-    width: 335,
+    width: "100%",
+    // backgroundColor: "red",
+    borderRadius: 8,
     height: 118,
     borderWidth: 1,
     borderColor: "#6B6B6B",

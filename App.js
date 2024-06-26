@@ -12,6 +12,7 @@ import IdleTimerManager from "react-native-idle-timer";
 import { UserActivityProvider } from "./src/components/UserContext";
 import { useUserContext } from "./src/components/UserContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { RootSiblingParent } from "react-native-root-siblings";
 
 AsyncStorage.clear();
 
@@ -61,9 +62,11 @@ const App = ({ navigation, state }) => {
   return (
     <UserProvider>
       <UserActivityProvider>
-        <NavigationContainer>
-          <AppNavigator />
-        </NavigationContainer>
+        <RootSiblingParent>
+          <NavigationContainer>
+            <AppNavigator />
+          </NavigationContainer>
+        </RootSiblingParent>
       </UserActivityProvider>
     </UserProvider>
   );
