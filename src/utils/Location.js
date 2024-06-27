@@ -26,7 +26,7 @@ let FetchLoction2 = async (query) => {
 const FetchLoction = async (location) => {
   try {
     const request = await fetch(
-      `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${location}&key=AIzaSyDvtWNeV6bFqQ51ZRl8WDbRi_73OhHs1VU`
+      `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${location}&components=country:ng&key=AIzaSyDvtWNeV6bFqQ51ZRl8WDbRi_73OhHs1VU`
     );
     let data = request.json();
     // console.log(data);
