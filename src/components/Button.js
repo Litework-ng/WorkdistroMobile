@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
     ButtonText:{
         color: 'white',
         fontWeight: 'bold',
+        fontFamily: 'Manrope-Bold',
     }
 })
 

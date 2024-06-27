@@ -10,59 +10,54 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { DollarSquare, Location } from "iconsax-react-native";
 
-const BestMatchesScreen = ({ navigation }) => {
+const BestMatchesScreen = ({ job, navigation }) => {
   return (
-    <View
-      style={{
-        borderWidth: 1,
-        padding: 15,
-        borderRadius: 4,
-        marginTop: 20,
-        borderColor: "#E4E4E4",
-      }}
-    >
-      <View style={{ flexDirection: "row" }}>
-        <View style={{ flexDirection: "row", gap: 10 }}>
-          <Text style={styles.taskTitle}>Laundry</Text>
-        </View>
-        <TouchableOpacity>
-          {/* <FontAwesomeIcon
-            icon={faEllipsis}
-            size={14}
-            style={{ alignSelf: "center", marginLeft: 225 }}
-          /> */}
-        </TouchableOpacity>
-      </View>
-      <Text
-        style={{
-          fontSize: 12,
-          color: "#7E7E7E",
-          width: 303,
-          height: 36,
-          marginTop: 10,
-        }}
+      <View
+          style={{
+              borderWidth: 1,
+              padding: 15,
+              borderRadius: 4,
+              marginTop: 20,
+              borderColor: "#E4E4E4",
+          }}
       >
-        Lorem ipsum dolor sit amet consectetur. Commodo fames viverra est eget
-        nec feugiat augue semper dolor.
-      </Text>
-      <View style={styles.detailsContainer}>
-        <View style={styles.itemDetailsContainer}>
-          <Location size={16} color="#7E7E7E" />
-          <Text style={styles.locationText}>Ikorodu, Lagos</Text>
-        </View>
-        <View style={styles.itemDetailsContainer}>
-          <DollarSquare size={16} color="#7E7E7E" />
-          <Text style={styles.paymentText}>Wallet</Text>
-        </View>
+          <View style={{ flexDirection: "row" }}>
+              <View style={{ flexDirection: "row", gap: 10 }}>
+                  <Text style={styles.taskTitle}>{job.subject}</Text>
+              </View>
+              <TouchableOpacity>
+                  {/* Placeholder for icon */}
+              </TouchableOpacity>
+          </View>
+          <Text
+              style={{
+                  fontSize: 12,
+                  color: "#7E7E7E",
+                  width: 303,
+                  height: 36,
+                  marginTop: 10,
+              }}
+          >
+              {job.description}
+          </Text>
+          <View style={styles.detailsContainer}>
+              <View style={styles.itemDetailsContainer}>
+                  <Location size={16} color="#7E7E7E" />
+                  <Text style={styles.locationText}>{job.location}</Text>
+              </View>
+              <View style={styles.itemDetailsContainer}>
+                  <DollarSquare size={16} color="#7E7E7E" />
+                  <Text style={styles.paymentText}>{job.paymentMethod}</Text>
+              </View>
+          </View>
+          <Text style={styles.budgetText}>Budget: {job.budget}</Text>
+          <TouchableOpacity
+              style={styles.ViewBidButton}
+              onPress={() => navigation.navigate("WorkerBid")}
+          >
+              <Text style={styles.ViewBidText}>Bid</Text>
+          </TouchableOpacity>
       </View>
-      <Text style={styles.budgetText}>Budget: N6,000</Text>
-      <TouchableOpacity
-        style={styles.ViewBidButton}
-        onPress={() => navigation.navigate("WorkerBid")}
-      >
-        <Text style={styles.ViewBidText}>Bid</Text>
-      </TouchableOpacity>
-    </View>
   );
 };
 

@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faSearch , faEdit, faLocationDot, faDollarSign} from '@fortawesome/free-solid-svg-icons';
 import { DollarSquare, Location } from 'iconsax-react-native';
 
-const InProgressTaskWorker = ({navigation}) => {
+const InProgressTaskWorker = ({navigation, job, bid}) => {
     const [rating, setRating] = useState(0);
     const handleRating = (ratedValue) => {
         // Handle the rated value (1 to 5) as needed
@@ -17,17 +17,17 @@ const InProgressTaskWorker = ({navigation}) => {
         <View style={{flexDirection:'row',  }}>
             
             <View style={{flexDirection:'row', gap:10,}}>
-                <Text style={styles.taskTitle}>Laundry</Text>
+                <Text style={styles.taskTitle}>{job.subject}</Text>
                 
             </View>
            
 
         </View>
-        <Text style={{fontSize:12, color:'#7E7E7E', width:303, height:36, marginTop:10,}}>Lorem ipsum dolor sit amet consectetur. Commodo fames viverra est eget nec feugiat augue semper dolor.</Text>
+        <Text style={{fontSize:12, color:'#7E7E7E', width:303, height:36, marginTop:10,}}>{job.description}</Text>
         <View style={styles.detailsContainer}>
             <View style={styles.itemDetailsContainer}>
             <Location size={16} color='#7E7E7E'/>
-            <Text style={styles.locationText}>Ikorodu, Lagos</Text>
+            <Text style={styles.locationText}>{job.location}</Text>
         </View>
         <View style={styles.itemDetailsContainer}> 
             <DollarSquare size={16} color='#7E7E7E'/>
@@ -35,8 +35,8 @@ const InProgressTaskWorker = ({navigation}) => {
         </View>
         </View>
         <View style={{flexDirection:'row', gap:50,}}>
-             <Text style={styles.budgetText}>Budget: N6,000</Text>
-             <Text style={styles.budgetText}>Bid: N7,000</Text>
+             <Text style={styles.budgetText}>Budget: N{job.budget}</Text>
+             <Text style={styles.budgetText}>Bid: N{bid.bid}</Text>
         </View>
         
         <Text style={{fontSize:12,fontWeight:'500', color:'#818181', marginTop:16, marginBottom:5,}}>Distroworker:</Text>

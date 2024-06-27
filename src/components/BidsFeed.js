@@ -5,26 +5,26 @@ import { faSearch , faEdit, faLocationDot, faDollarSign} from '@fortawesome/free
 import { DollarSquare, Location } from 'iconsax-react-native';
 
 
-const BidsFeed = ({navigation}) => {
+const BidsFeed = ({job, bid}) => {
     return(
         <View style={{borderWidth:1,padding:15, borderRadius:4, marginTop:20, borderColor:'#E4E4E4',}}>
             <View style={{flexDirection:'row',  }}>
                 
                 <View style={{flexDirection:'row', gap:10,}}>
-                    <Text style={styles.taskTitle}>Laundry</Text>
+                    <Text style={styles.taskTitle}>{job.subject}</Text>
                     
                 </View>
                 <TouchableOpacity>
 
-                    <Text style={{fontSize:10, fontWeight:'400', color:'#C11414', alignSelf:'center', marginLeft:165,}}>Withdraw Bid</Text>
+                    <Text style={{fontSize:10, fontWeight:'400',fontFamily:'Manrope-Regular', color:'#C11414', alignSelf:'center', marginLeft:165,}}>Withdraw Bid</Text>
                 </TouchableOpacity>
 
             </View>
-            <Text style={{fontSize:12, color:'#7E7E7E', width:303, height:36, marginTop:10,}}>Lorem ipsum dolor sit amet consectetur. Commodo fames viverra est eget nec feugiat augue semper dolor.</Text>
+            <Text style={{fontSize:12, color:'#7E7E7E', width:303, height:36, marginTop:10, fontFamily:'Manrope-Regular'}}>{job.description}</Text>
             <View style={styles.detailsContainer}>
                 <View style={styles.itemDetailsContainer}>
                 <Location size={16} color='#7E7E7E'/>
-                <Text style={styles.locationText}>Ikorodu, Lagos</Text>
+                <Text style={styles.locationText}>{job.location}</Text>
             </View>
             <View style={styles.itemDetailsContainer}> 
                 <DollarSquare size={16} color='#7E7E7E'/>
@@ -32,8 +32,8 @@ const BidsFeed = ({navigation}) => {
             </View>
             </View>
             <View style={{flexDirection:'row', gap:50,}}>
-            <Text style={styles.budgetText}>Budget: N6,000</Text>
-            <Text style={styles.budgetText}>Bid: N7,000</Text>
+            <Text style={styles.budgetText}>Budget: N{job.budget}</Text>
+            <Text style={styles.budgetText}>Bid: N{bid.bid}</Text>
 
             </View>
             
@@ -46,6 +46,7 @@ const styles = StyleSheet.create({
     taskTitle:{
         fontSize:14,
         fontWeight:'500',
+        fontFamily:'Manrope-Medium'
     },
     detailsContainer:{
         flexDirection:'row',
@@ -65,17 +66,20 @@ const styles = StyleSheet.create({
         color:'#7E7E7E',
         alignSelf:'center',
         fontWeight:'400',
+        fontFamily:'Manrope-Regular'
     },
     locationText:{
         fontSize:12,
         color:'#7E7E7E',
         alignSelf:'center',
         fontWeight:'400',
+        fontFamily:'Manrope-Regular'
     }, 
     budgetText:{
         marginTop:18,
         fontSize:12,
-        fontWeight:'500'
+        fontWeight:'500',
+        fontFamily:'Manrope-Medium'
     },
     ViewBidButton:{
     backgroundColor: '#1F2A47',

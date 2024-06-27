@@ -92,23 +92,24 @@ const MultiStepForm = ({ navigation, route }) => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
-      );
 
-      console.log("Job posted successfully:", response.data);
-      setLoading(true);
-      setSuccess(true);
-      navigation.navigate("Task");
-    } catch (error) {
-      console.log(jobDetails.serviceName);
-      console.log(jobDetails.serviceId);
-      console.log(jobDetails.budget);
-      console.log(jobDetails.location);
-      console.log(jobDetails.description);
-      console.error("Error posting job:", error);
-      alert("Failed to post job. Please try again later.");
-    }
-  };
+        
+      });
+        
+        console.log('Job posted successfully:', response.data);
+        setLoading(true);
+        setSuccess(true);
+        navigation.navigate('Task');
+      } catch (error) {
+        console.error('Error posting job:', error);
+        alert('Failed to post job. Please try again later.');
+      }
+    };
+   
+    
+
+
+    
 
   return (
     <SafeAreaView>

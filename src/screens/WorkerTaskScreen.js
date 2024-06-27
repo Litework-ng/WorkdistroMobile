@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
-import CompletedTask from '../components/CompletedTask';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import BidsFeed from '../components/BidsFeed';
 import InProgressTaskWorker from '../components/InProgressTaskWorker';
 import CompletedTaskWorker from '../components/CompletedTaskWorker';
+import LoadingOverlay from '../components/Loading' 
+import ErrorModal from '../components/ErrorModal';
+import api from '../components/Api'
 
-const WorkerTaskScreen = ({navigation}) => {
+const WorkerTaskScreen = ({ navigation }) => {
   const [index, setIndex] = useState(0);
   const [routes] = useState([
     { key: 'bids', title: 'Bids' },
@@ -17,7 +20,7 @@ const WorkerTaskScreen = ({navigation}) => {
   const renderScene = SceneMap({
     bids: () => <BidTabContent navigation={navigation} />,
     inProgress: () => <InProgressTabContent navigation={navigation} />,
-    completed: () => <CompletedTabContent  navigation={navigation}/>,
+    completed: () => <CompletedTabContent navigation={navigation} />,
   });
 
   const renderTabBar = (props) => (
@@ -32,11 +35,8 @@ const WorkerTaskScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-                <Text style={styles.headerText}>Tasks</Text>
-                <View style={{backgroundColor:'#F1F5FF', width:40, height:40,padding:10,borderRadius:50, marginTop:0,}}>
-                <Image source={require('../../assets/images/user.png')} style={styles.user} />
-                </View>
-            </View>
+        <Text style={styles.headerText}>Tasks</Text>
+      </View>
       <TabView
         navigationState={{ index, routes }}
         renderScene={renderScene}
@@ -47,88 +47,134 @@ const WorkerTaskScreen = ({navigation}) => {
   );
 };
 
-
+const fetchData = async (url, token, setData) => {
+  try {
+    const response = await api.get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    setData(response.data.response);
+  } catch (error) {
+    console.log('Error fetching data bid', error);
+  }
+};
 
 const BidTabContent = ({ navigation }) => {
-    // Customize the content based on the selected tab (pending or completed)
-    // You can use your TaskItem component here to render individual tasks
-    return (
-      <ScrollView style={styles.tabContent}>
-        <View style={{paddingBottom:100,}}>
-        <BidsFeed navigation={navigation}/>
-        <BidsFeed  navigation={navigation}/>
-        </View>
-      </ScrollView>
-    );
-  };
+  const [bids, setBids] = useState([]);
 
-  const InProgressTabContent = ({ navigation }) => {
-    // Customize the content based on the selected tab (pending or completed)
-    // You can use your TaskItem component here to render individual tasks
-    return (
-      <ScrollView style={styles.tabContent}>
-        <View style={{paddingBottom:100,}}>
-        <InProgressTaskWorker navigation={navigation}/>
-        <InProgressTaskWorker navigation={navigation}/>
-       
-        </View>
-      </ScrollView>
-    );
-  };
+  useEffect(() => {
+    const fetchBids = async () => {
+      const token = await AsyncStorage.getItem('logintoken');
+      if (token) {
+        await fetchData('worker/bid/', token, setBids);
+      }
+    };
+    fetchBids();
+  }, []);
 
-  const CompletedTabContent = ({ navigation }) => {
-    // Customize the content based on the selected tab (pending or completed)
-    // You can use your TaskItem component here to render individual tasks
+  if (!bids || bids.length === 0) {
     return (
-      <ScrollView style={styles.tabContent}>
-        <View style={{paddingBottom:100,}}>
-        <CompletedTaskWorker navigation={navigation}/>
-       
+        <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>No bids available</Text>
         </View>
-      </ScrollView>
     );
-  };
+}
+
+  return (
+    <ScrollView style={styles.tabContent}>
+      <View style={{ paddingBottom: 100 }}>
+        {bids.map((item) => (
+          <BidsFeed key={item.id} job={item.job} bid={item} navigation={navigation} />
+        ))}
+      </View>
+    </ScrollView>
+  );
+};
+
+const InProgressTabContent = ({ navigation }) => {
+  const [inProgressTasks, setInProgressTasks] = useState([]);
+
+  useEffect(() => {
+    const fetchInProgressTasks = async () => {
+      const token = await AsyncStorage.getItem('logintoken');
+      if (token) {
+        await fetchData('worker/inprogress/', token, setInProgressTasks);
+      }
+    };
+    fetchInProgressTasks();
+  }, []);
+
+  return (
+    <ScrollView style={styles.tabContent}>
+      <View style={{ paddingBottom: 100 }}>
+        {inProgressTasks.map((item) => (
+          <InProgressTaskWorker key={item.id} job={item.job} navigation={navigation} />
+        ))}
+      </View>
+    </ScrollView>
+  );
+};
+
+const CompletedTabContent = ({ navigation }) => {
+  const [completedTasks, setCompletedTasks] = useState([]);
+
+  useEffect(() => {
+    const fetchCompletedTasks = async () => {
+      const token = await AsyncStorage.getItem('logintoken');
+      if (token) {
+        await fetchData('worker/completed/', token, setCompletedTasks);
+      }
+    };
+    fetchCompletedTasks();
+  }, []);
+
+  return (
+    <ScrollView style={styles.tabContent}>
+      <View style={{ paddingBottom: 100 }}>
+        {completedTasks.map((item) => (
+          <CompletedTaskWorker key={item.id} job={item.job} navigation={navigation} />
+        ))}
+      </View>
+    </ScrollView>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 20,
-    backgroundColor:'#fff'
+    backgroundColor: '#fff'
   },
-  headerContainer:{
-    flexDirection:'row',
-    alignSelf:'center',
-    gap:121,
-    marginTop:10,
-    marginLeft:130,
-},
-headerText:{
-    fontSize:16,
-    fontWeight:'600',
-    marginTop:10,
-},
-user:{
-   width:18,
-   height:18,
-    alignSelf:'center'
-},
+  headerContainer: {
+    flexDirection: 'row',
+    alignSelf: 'center',
+    gap: 121,
+    marginTop: 10,
+    marginBottom: 50,
+  },
+  headerText: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginTop: 10,
+    fontFamily: 'Manrope-Bold'
+  },
   tabIndicator: {
-    backgroundColor:  '#1F2A47', // Customize the indicator color
+    backgroundColor: '#1F2A47', // Customize the indicator color
   },
   tabBar: {
     backgroundColor: 'white', // Customize the tab bar background color
   },
   tabLabel: {
     color: 'black',
-    textTransform: 'none' ,
-    fontSize:14,
-    fontWeight:'500',// Customize the tab label color
+    textTransform: 'none',
+    fontSize: 14,
+    fontWeight: '500',
+    fontFamily: 'Manrope-Medium'
   },
   tabContent: {
-    flex:1,
-    padding:20,
-    
-  
+    flex: 1,
+    padding: 20,
   },
 });
 
