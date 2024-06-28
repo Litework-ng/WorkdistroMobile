@@ -75,7 +75,7 @@ const DescriptionForm = ({
         {descriptionErr && (
           <Text
             style={{
-              color: "red",
+              color: "#C11414",
             }}
           >
             Please,You need to give a description
@@ -113,7 +113,7 @@ const DescriptionForm = ({
                   ? "green"
                   : jobDetails.description.length < 480
                   ? "blue"
-                  : "red",
+                  : "C11414",
             },
           ]}
         >{`${jobDetails.description.length}/500`}</Text>

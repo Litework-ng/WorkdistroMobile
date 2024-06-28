@@ -18,6 +18,7 @@ const HomeScreenWorker = ({navigation}) => {
         { key: 'mostRecent', title: 'Most Recent' },
         
       ]);
+      const [firstName, setFirstName] = useState('');
 
       const renderScene = ({ route }) => {
         switch (route.key) {
@@ -63,6 +64,18 @@ const HomeScreenWorker = ({navigation}) => {
             }
         };
 
+        const getFirstName = async () => {
+          try {
+            const storedFirstName = await AsyncStorage.getItem('firstName');
+            if (storedFirstName) {
+              setFirstName(storedFirstName);
+            }
+          } catch (error) {
+            console.error('Error retrieving first name', error);
+          }
+        };
+
+        getFirstName();
         fetchJobs();
     }, []);
 
@@ -70,7 +83,7 @@ const HomeScreenWorker = ({navigation}) => {
         <View style={styles.container}>
             <View style={styles.headerContainer}>
                  <Image source={require('../../assets/images/logo.png')} style={styles.logo} />        
-                 <Text style={styles.welcomeText}>Hello Tee</Text>
+                 <Text style={styles.welcomeText}>Hello {firstName}</Text>
                       
               
             </View> 

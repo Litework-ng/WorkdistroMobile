@@ -294,7 +294,7 @@ const RegistrationScreenClient = ({ navigation }) => {
             }) => (
               <View style={styles.form}>
                 {errorMessage ? (
-                  <Text style={{ color: "red", marginBottom: 16 }}>
+                  <Text style={{ color: "#C11414", marginBottom: 16, fontFamily:'Manrope-Regular', }}>
                     {errorMessage}
                   </Text>
                 ) : null}
@@ -542,14 +542,16 @@ const styles = StyleSheet.create({
   },
 
   errorText: {
-    color: "red",
+    color: "#C11414",
     fontSize: 12,
+    fontFamily:'Manrope-Regular',
   },
   errorTextPassword: {
-    color: "red",
+    color: "#C11414",
     fontSize: 12,
     marginTop: 5,
     paddingLeft: 40,
+    fontFamily:'Manrope-Regular',
   },
   scrollContainer: {
     flexGrow: 1,

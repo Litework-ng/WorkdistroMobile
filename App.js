@@ -13,6 +13,7 @@ import { UserActivityProvider } from "./src/components/UserContext";
 import { useUserContext } from "./src/components/UserContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RootSiblingParent } from "react-native-root-siblings";
+import { ToastProvider } from "./src/components/ToastProvider";
 
 AsyncStorage.clear();
 
@@ -62,11 +63,13 @@ const App = ({ navigation, state }) => {
   return (
     <UserProvider>
       <UserActivityProvider>
-        <RootSiblingParent>
+       <ToastProvider>
           <NavigationContainer>
             <AppNavigator />
           </NavigationContainer>
-        </RootSiblingParent>
+
+       </ToastProvider>
+        
       </UserActivityProvider>
     </UserProvider>
   );

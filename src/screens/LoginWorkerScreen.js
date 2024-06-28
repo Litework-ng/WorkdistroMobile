@@ -94,8 +94,12 @@ const LoginWorkerScreen = ({ navigation }) => {
 
       // Check if login was successful
       if (response.data.response) {
-        // Store token securely
+      
+        const fullName = response.data.user.name
+        const firstName = fullName.split(' ')[0];
+
         await AsyncStorage.setItem("logintoken", response.data.access_token);
+        await AsyncStorage.setItem('firstName', firstName);
 
         // Navigate to the next screen or perform any other action
         navigation.navigate("BottomTabs");
@@ -220,7 +224,7 @@ const LoginWorkerScreen = ({ navigation }) => {
             }) => (
               <View style={styles.form}>
                 {errorMessage ? (
-                  <Text style={{ color: "red", marginBottom: 16 }}>
+                  <Text style={{ color: "#C11414", marginBottom: 16, fontFamily:'Manrope-Regular' }}>
                     {errorMessage}
                   </Text>
                 ) : null}

@@ -23,6 +23,7 @@ const HomeScreen = ({ navigation }) => {
   const [services, setServices] = useState([]);
   const [filteredServices, setFilteredServices] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [firstName, setFirstName] = useState('');
 
   const ServiceItem = ({ label, image, onPress }) => (
     <TouchableOpacity onPress={() => onPress(label)}>
@@ -76,6 +77,18 @@ const HomeScreen = ({ navigation }) => {
       }
     };
 
+    const getFirstName = async () => {
+      try {
+        const storedFirstName = await AsyncStorage.getItem('firstName');
+        if (storedFirstName) {
+          setFirstName(storedFirstName);
+        }
+      } catch (error) {
+        console.error('Error retrieving first name', error);
+      }
+    };
+
+    getFirstName();
     fetchServices();
   }, []);
 
@@ -103,7 +116,7 @@ const HomeScreen = ({ navigation }) => {
             style={styles.wordLogo}
           />
         </View>
-        <Text style={styles.welcomeText}>Hello Tee</Text>
+        <Text style={styles.welcomeText}>Hello {firstName}</Text>
         <View style={styles.searchContainer}>
           <TextInput
             value={searchQuery}
