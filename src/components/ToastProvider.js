@@ -11,10 +11,13 @@ export const ToastProvider = ({ children }) => {
     setToast({ visible: true, message, duration });
   };
 
+  const hideToast = () => {
+    setToast((prev) => ({ ...prev, visible: false }));
+  };
   return (
     <ToastContext.Provider value={showToast}>
       {children}
-      <CustomToast visible={toast.visible} message={toast.message} duration={toast.duration} />
+      <CustomToast visible={toast.visible} message={toast.message} duration={toast.duration} onHide={hideToast} />
     </ToastContext.Provider>
   );
 };

@@ -309,7 +309,7 @@ const PaymentScreen = ({
             text="Review Post"
             onPress={() => {
               if (jobDetails.budget < 1000) {
-                showToast('This is a custom toast message!')
+                showToast('Your Budget must be at least N1000')
 
                 return;
               }

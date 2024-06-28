@@ -29,14 +29,11 @@ const ReviewScreen =({onPrev,success,StepIndicator,loading, step, navigation, jo
             <Location size={16} color='#7E7E7E'/>
             <Text style={styles.locationText}>{jobDetails.location}</Text>
         </View>
-        <View style={styles.itemDetailsContainer}> 
-            <DollarSquare size={16} color='#7E7E7E'/>
-            <Text style={styles.paymentText}>{jobDetails.paymentMethod}</Text>
-        </View>
+        
 
 
       </View>
-      <Text style={styles.budgetText}>Budget: {jobDetails.budget}</Text>
+      <Text style={styles.budgetText}>Budget: N{jobDetails.budget}</Text>
       <Modal transparent={true} visible={loading} style={styles.modalStyles}>
         <View style={styles.modalContainer}>
           <ActivityIndicator size="large" color='#1F2A47' />
