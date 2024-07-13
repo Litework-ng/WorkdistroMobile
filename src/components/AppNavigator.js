@@ -1,6 +1,6 @@
 // Import necessary components and functions
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Text } from "react-native";
+import { Text, View, Alert, ActivityIndicator } from "react-native";
 import OnboardingScreen from "../screens/OnBoardingScreen";
 import RegistrationScreenWorker from "../screens/RegistrationScreenWorker";
 import RegistrationScreenClient from "../screens/RegistrationScreenClient";
@@ -39,24 +39,21 @@ import AboutUs from "../screens/AboutUs";
 import { useUserContext } from "./UserContext";
 import BottomNavigator from "./BottomTabNavigator";
 import LoginNavigator from "./LoginNavigator";
-import React, { useEffect, useRef, useState } from "react";
-import { AppState, Alert } from "react-native";
+import React, { useEffect, useRef, useState, useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../components/Api";
 import JobSelectionModal from "./JobSelectionModal";
-import { ActivityIndicator, View } from "react-native";
-// Create a stack navigator
+import { FirstTimeUserContext } from "./firstTimeUserContext";
+
 const Stack = createNativeStackNavigator();
-const TIMEOUT_DURATION = 300000;
+const TIMEOUT_DURATION = 3000000;
 const MAX_RETRIES = 3;
 
-// Define the navigator component
+
 const AppNavigator = () => {
   const navigation = useNavigation();
-
   const timeoutRef = useRef(null);
-
   const { userSelection, setSelection } = useUserContext();
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [service, setServices] = useState([]);
@@ -64,8 +61,26 @@ const AppNavigator = () => {
   const [initialRoute, setInitialRoute] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const { firstTimeUser, updateFirstTimeUser } = useContext(FirstTimeUserContext);
 
   useEffect(() => {
+    const checkFirstTimeUser = async () => {
+      try {
+        const isFirstTimeUser = await AsyncStorage.getItem('firstTimeUser');
+        if (isFirstTimeUser === null) {
+          setInitialRoute('Onboarding');
+          await AsyncStorage.setItem('firstTimeUser', 'false');
+        } else {
+          setInitialRoute('Login');
+        }
+      } catch (error) {
+        console.error('Error checking first time user flag', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+
     const fetchAndStoreServices = async () => {
       try {
         const response = await api.get("/service/");
@@ -77,33 +92,18 @@ const AppNavigator = () => {
         if (retryCount < MAX_RETRIES) {
           setRetryCount(retryCount + 1);
         } else {
-          setError(
-            "Failed to fetch services. Please check your network connection and try again."
-          );
-          Alert.alert(
-            "Error",
-            "Failed to fetch services. Please check your network connection and try again.",
-            [{ text: "OK", onPress: retryFetch }]
-          );
+          setError("Failed to fetch services. Please check your network connection and try again.");
+          Alert.alert("Error", "Failed to fetch services. Please check your network connection and try again.", [
+            { text: "OK", onPress: retryFetch },
+          ]);
         }
-      }
-    };
-
-    const checkOnboardingStatus = async () => {
-      try {
-        const hasOnboarded = await AsyncStorage.getItem("hasOnboarded");
-        console.log(hasOnboarded);
-        setInitialRoute(hasOnboarded ? "Login" : "Onboarding");
-      } catch (error) {
-        console.error("Failed to check onboarding status from storage", error);
-        setInitialRoute("Onboarding");
       }
     };
 
     const initializeApp = async () => {
       setLoading(true);
+      await checkFirstTimeUser();
       await fetchAndStoreServices();
-      await checkOnboardingStatus();
       setLoading(false);
     };
 
@@ -117,23 +117,6 @@ const AppNavigator = () => {
   };
 
   const setSelectedUserType = setSelection;
-
-  useEffect(() => {
-    const handleAppStateChange = (nextAppState) => {
-      if (nextAppState === "background") {
-        startTimeoutTimer();
-      } else {
-        clearTimeoutTimer();
-      }
-    };
-
-    const myListner = AppState.addEventListener("change", handleAppStateChange);
-
-    return () => {
-      myListner.remove();
-      clearTimeoutTimer();
-    };
-  }, []);
 
   const startTimeoutTimer = () => {
     timeoutRef.current = setTimeout(
@@ -153,38 +136,13 @@ const AppNavigator = () => {
   };
 
   const logout = () => {
-    // Perform logout actions here
-    Alert.alert(
-      "Session Timeout",
-      "Your session has timed out. Please log in again."
-    );
-    // Example: navigate to the login screen
-    // navigation.navigate('Login');
+    Alert.alert("Session Timeout", "Your session has timed out. Please log in again.");
   };
 
-  const handleLogout = (userType) => {
-    // Perform logout logic (clear authentication tokens, etc.)
-    // For demonstration, navigate to the appropriate login screen
-    if (userType === "becomeWorker") {
-      navigation.navigate("LoginWorker"); // Navigate to worker login screen
-      Alert.alert(
-        "Session Timeout",
-        "Your session has timed out. Please log in again."
-      );
-    } else if (userType === "findWorker") {
-      navigation.navigate("Login"); // Navigate to client login screen
-      Alert.alert(
-        "Session Timeout",
-        "Your session has timed out. Please log in again."
-      );
-    } else {
-      // Default to a generic login screen if userType is not recognized
-      navigation.navigate("Login");
-      Alert.alert(
-        "Session Timeout",
-        "Your session has timed out. Please log in again."
-      );
-    }
+  const handleLogout = async () => {
+    await AsyncStorage.setItem("logintoken", "");
+    navigation.navigate("Login");
+    Alert.alert("Session Timeout", "Your session has timed out. Please log in again.");
   };
 
   const handleUserActivity = () => {
@@ -201,25 +159,15 @@ const AppNavigator = () => {
   }
 
   return (
-    <Stack.Navigator
-      initialRouteName={initialRoute}
-      screenOptions={{ headerShown: false }}
-    >
+      <Stack.Navigator initialRouteName={initialRoute} screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="OtpScreen" component={OtpScreen} />
       <Stack.Screen name="Login" component={NavigateLogin} />
       <Stack.Screen name="Onboarding" component={OnboardingScreen} />
       <Stack.Screen name="BottomTabs" component={BottomTabsWrapper} />
-      <Stack.Screen
-        name="OtpWorkerScreen"
-        component={OtpVerificationWorkerScreen}
-      />
-      <Stack.Screen
-        name="JobSelectionModal"
-        component={JobSelectionModal}
-        options={{ headerShown: false }}
-      />
+      <Stack.Screen name="OtpWorkerScreen" component={OtpVerificationWorkerScreen} />
+      <Stack.Screen name="JobSelectionModal" component={JobSelectionModal} options={{ headerShown: false }} />
       <Stack.Screen name="SignUpClient" component={RegistrationScreenClient} />
       <Stack.Screen name="SignUpWorker" component={RegistrationScreenWorker} />
-      <Stack.Screen name="OtpScreen" component={OtpScreen} />
       <Stack.Screen name="ForgotPwd" component={ForgotPwdScreen} />
       <Stack.Screen name="ResetPwd" component={ResetPwdScreen} />
       <Stack.Screen name="MultiStepForm" component={MultiStepForm} />
@@ -250,6 +198,8 @@ const AppNavigator = () => {
     </Stack.Navigator>
   );
 };
+
+
 const BottomTabsWrapper = () => {
   const { userSelection } = useUserContext();
   return <BottomNavigator userSelection={userSelection} />;
@@ -259,4 +209,5 @@ const NavigateLogin = () => {
   const { userSelection } = useUserContext();
   return <LoginNavigator userSelection={userSelection} />;
 };
+
 export default AppNavigator;

@@ -100,9 +100,11 @@ const LoginWorkerScreen = ({ navigation }) => {
 
         await AsyncStorage.setItem("logintoken", response.data.access_token);
         await AsyncStorage.setItem('firstName', firstName);
-
+        await AsyncStorage.setItem('isFirstTimeUser', 'false');
         // Navigate to the next screen or perform any other action
         navigation.navigate("BottomTabs");
+        const checktest= await AsyncStorage.getItem('isFirstTimeUser');
+        
         // console.log("Login successful");
       } else {
         // Handle login failure

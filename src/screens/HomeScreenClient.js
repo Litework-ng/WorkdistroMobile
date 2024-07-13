@@ -18,12 +18,14 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { SearchNormal1 } from "iconsax-react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useUserContext } from "../components/UserContext";
 
 const HomeScreen = ({ navigation }) => {
   const [services, setServices] = useState([]);
   const [filteredServices, setFilteredServices] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [firstName, setFirstName] = useState('');
+  const { userSelection, setSelection } = useUserContext();
 
   const ServiceItem = ({ label, image, onPress }) => (
     <TouchableOpacity onPress={() => onPress(label)}>
@@ -62,6 +64,7 @@ const HomeScreen = ({ navigation }) => {
     const fetchServices = async () => {
       try {
         const servicesData = await AsyncStorage.getItem("services");
+        setSelection("findWorker");
         if (servicesData) {
           const services = JSON.parse(servicesData);
           setServices(services);

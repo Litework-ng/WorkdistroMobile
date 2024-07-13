@@ -10,12 +10,13 @@ import * as Font from "expo-font";
 import React, { useEffect, useRef, useState } from "react";
 import IdleTimerManager from "react-native-idle-timer";
 import { UserActivityProvider } from "./src/components/UserContext";
+import { JobProvider} from "./src/components/jobContext";
 import { useUserContext } from "./src/components/UserContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RootSiblingParent } from "react-native-root-siblings";
 import { ToastProvider } from "./src/components/ToastProvider";
+import { FirstTimeUserProvider } from "./src/components/firstTimeUserContext";
 
-AsyncStorage.clear();
 
 const fetchFonts = () => {
   return Font.loadAsync({
@@ -62,15 +63,21 @@ const App = ({ navigation, state }) => {
 
   return (
     <UserProvider>
+      <FirstTimeUserProvider>
+
       <UserActivityProvider>
+        <JobProvider>
        <ToastProvider>
           <NavigationContainer>
             <AppNavigator />
           </NavigationContainer>
 
        </ToastProvider>
+
+        </JobProvider>
         
       </UserActivityProvider>
+      </FirstTimeUserProvider>
     </UserProvider>
   );
 };

@@ -8,8 +8,10 @@ import MostRecentScreen from '../components/MostRecent';
 import PendingTask from '../components/PendingTask';
 import api from '../components/Api'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { DollarSquare, Location } from "iconsax-react-native";
-
+import { DollarSquare, Location, LocationAdd, More, Send2 } from "iconsax-react-native";
+import { useUserContext } from "../components/UserContext";
+import CustomMenu from '../components/CustomMenu';
+import { ClipboardClose, Flag } from 'iconsax-react-native';
 
 const HomeScreenWorker = ({navigation}) => {
     const [index, setIndex] = useState(0);
@@ -19,7 +21,7 @@ const HomeScreenWorker = ({navigation}) => {
         
       ]);
       const [firstName, setFirstName] = useState('');
-
+      const [address, setAddress] = useState('');
       const renderScene = ({ route }) => {
         switch (route.key) {
             case 'bestMatches':
@@ -31,7 +33,7 @@ const HomeScreenWorker = ({navigation}) => {
         }
     };
       const [jobs, setJobs] = useState([]);
-
+      const { userSelection, setSelection } = useUserContext();
       const renderTabBar = (props) => (
         <TabBar
           {...props}
@@ -44,6 +46,7 @@ const HomeScreenWorker = ({navigation}) => {
       useEffect(() => {
         const fetchJobs = async () => {
             try {
+              setSelection("becomeWorker");
                 const token = await AsyncStorage.getItem('logintoken');
                 if (token) {
                     const response = await api.get('worker/feed/', {
@@ -79,12 +82,33 @@ const HomeScreenWorker = ({navigation}) => {
         fetchJobs();
     }, []);
 
+    const handleAddressChange = (text) => {
+      setAddress(text);
+      // Optionally, you can use a geocoding API to get the coordinates from the address
+  };
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+};
+
+
     return(
+      <TouchableWithoutFeedback onPress={dismissKeyboard}>
+
         <View style={styles.container}>
             <View style={styles.headerContainer}>
                  <Image source={require('../../assets/images/logo.png')} style={styles.logo} />        
                  <Text style={styles.welcomeText}>Hello {firstName}</Text>
-                      
+                      <View style={{flexDirection:'row', alignItems:'center', gap:12,}}>
+                                    <TextInput
+                              style={styles.input}
+                              value={address}
+                              onChangeText={handleAddressChange}
+                              placeholder="Set your location..."
+                          />
+                          <TouchableOpacity style={styles.LocationAddContainer}>
+                            <Send2 size={20}  color='#fff' variant='Bold'/>
+                          </TouchableOpacity>
+                      </View>
               
             </View> 
             <TabView
@@ -94,6 +118,7 @@ const HomeScreenWorker = ({navigation}) => {
                 renderTabBar={renderTabBar}
             />
         </View>
+      </TouchableWithoutFeedback>
     )
 };
 
@@ -143,6 +168,11 @@ const BestMatchesTabContent = ({ navigation, jobs }) => {
     const handleBid = (job) => {
       navigation.navigate('WorkerBid', { job });
   };
+  const menuItems = [
+    { label: 'Report Task', icon: Flag, onPress: () => console.log('Option 1 pressed') },
+    { label: 'Task Not Best For Me', icon: ClipboardClose, onPress: () => console.log('Option 2 pressed') },
+  ];
+
     return (
         <View
             style={{
@@ -153,13 +183,11 @@ const BestMatchesTabContent = ({ navigation, jobs }) => {
                 borderColor: "#E4E4E4",
             }}
         >
-            <View style={{ flexDirection: "row" }}>
+            <View style={{ flexDirection:'row', gap:'230', alignItems:'center'}}>
                 <View style={{ flexDirection: "row", gap: 10 }}>
                     <Text style={styles.taskTitle}>{job.subject}</Text>
                 </View>
-                <TouchableOpacity>
-                    {/* Placeholder for icon */}
-                </TouchableOpacity>
+                <CustomMenu menuItems={menuItems} />
             </View>
             <Text
                 style={{
@@ -178,10 +206,7 @@ const BestMatchesTabContent = ({ navigation, jobs }) => {
                 <Location size={16} color="#7E7E7E" />
                     <Text style={styles.locationText}>{job.location}</Text>
                 </View>
-                <View style={styles.itemDetailsContainer}>
-                <DollarSquare size={16} color="#7E7E7E" />
-                    <Text style={styles.paymentText}>{job.paymentMethod}</Text>
-                </View>
+               
             </View>
             <Text style={styles.budgetText}>Budget: N{job.budget}</Text>
             <TouchableOpacity
@@ -221,6 +246,16 @@ const styles = StyleSheet.create({
             marginBottom:8,
             color:'#1A1A1A',
           },
+          input: {
+            height: 40,
+            width: 291,
+            borderColor: "#E6E6E6",
+            borderWidth: 1,
+           
+            paddingLeft: 10,
+            color: "#1A1A1A",
+            borderRadius: 4,
+          },
           tabIndicator: {
             backgroundColor:  '#1F2A47', // Customize the indicator color
           },
@@ -239,6 +274,12 @@ const styles = StyleSheet.create({
             padding:20,   
           },
 
+          LocationAddContainer:{
+            padding:8,
+            backgroundColor:"#1F2A47",
+            borderRadius:50,
+            alignSelf:'center'
+          },
           taskTitle: {
             fontSize: 14,
             fontWeight: "500",

@@ -13,14 +13,15 @@ import {
 } from "react-native";
 import Swiper from "react-native-swiper";
 import { useNavigation } from "@react-navigation/native";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useUserContext } from "../components/UserContext";
 import { useUserActivity } from "../components/UserContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { JobContext } from "./jobContext";
 
-const OnboardingSlides = ({ navigation }) => {
+const OnboardingSlides = ({ navigation, route }) => {
   const swiperRef = React.useRef(null);
   const { handleUserActivity } = useUserActivity();
   const [becomeWorkerActive, setBecomeWorkerActive] = useState(false);
@@ -30,12 +31,11 @@ const OnboardingSlides = ({ navigation }) => {
   const [selectedJobs, setSelectedJobs] = useState([]);
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [isBecomeWorkerSelected, setIsBecomeWorkerSelected] = useState(false);
-  const [selectedJob, setSelectedJob] = useState(null);
+  
   const [services, setServices] = useState([]);
   const [allJobs, setAllJobs] = useState([]);
-
+  const { selectedJobContext } = useContext(JobContext);
   const popularJobs = ["Job1", "Job3", "Job5"];
-
   const handleSkip = () => {
     // Navigate to the last slide
     if (swiperRef.current) {
@@ -58,19 +58,9 @@ const OnboardingSlides = ({ navigation }) => {
   };
 
   const { userSelection, setSelection } = useUserContext();
+ 
 
-  const selectedUserType = userSelection;
-  const setSelectedUserType = setSelection;
-
-  const searchJobs = (text) => {
-    setSearchTerm(text);
-    const filtered = allJobs.filter((job) =>
-      job.toLowerCase().includes(text.toLowerCase())
-    );
-    setFilteredJobs(filtered);
-    setSelectedJob(null);
-    handleUserActivity();
-  };
+ 
 
   const handleGetStarted = async (userType) => {
     try {
@@ -94,6 +84,8 @@ const OnboardingSlides = ({ navigation }) => {
   const loadServicesFromStorage = async () => {
     try {
       const storedServices = await AsyncStorage.getItem("services");
+      const jobSelected = await AsyncStorage.getItem("selectedJobAsync");
+     
       if (storedServices) {
         const servicesData = JSON.parse(storedServices);
         setServices(servicesData);
@@ -107,26 +99,29 @@ const OnboardingSlides = ({ navigation }) => {
       console.error("Failed to load services from storage", error);
     }
   };
+  
 
   useEffect(() => {
     loadServicesFromStorage();
+    
   }, []);
+ 
 
   const handleBecomeWorker = () => {
     setBecomeWorkerActive(true);
     setFindWorkerActive(false);
-    setSelectedUserType("becomeWorker");
+    setSelection("becomeWorker");
     setIsBecomeWorkerSelected(true);
     navigation.navigate("JobSelectionModal");
-    console.log("worker");
+   
   };
 
   const handleFindWorker = () => {
     setBecomeWorkerActive(false);
     setFindWorkerActive(true);
-    setSelectedUserType("findWorker");
+    setSelection("findWorker");
     setIsBecomeWorkerSelected(false);
-    console.log("client");
+    
   };
 
   const renderPagination = (index, total) => {
@@ -156,11 +151,11 @@ const OnboardingSlides = ({ navigation }) => {
             <TouchableOpacity
               style={[
                 styles.getStartedButton,
-                !selectedUserType && styles.disabledButton,
+                !userSelection && styles.disabledButton,
                
               ]}
-              onPress={() => handleGetStarted(selectedUserType)}
-              disabled={!selectedUserType}
+              onPress={() => handleGetStarted(userSelection)}
+              disabled={!userSelection}
             >
               <Text style={styles.getStartedButtonText}>Get Started</Text>
             </TouchableOpacity>
@@ -287,6 +282,8 @@ const OnboardingSlides = ({ navigation }) => {
                 Don’t worry, you can always switch later in settings
               </Text>
               <View style={styles.UserSelectionContainer}>
+                <View>
+
                 <TouchableOpacity
                   style={[
                     styles.selectionContainer,
@@ -300,6 +297,22 @@ const OnboardingSlides = ({ navigation }) => {
                   />
                   <Text style={styles.selectionText}>As A Worker</Text>
                 </TouchableOpacity>
+                            {selectedJobContext && userSelection === 'becomeWorker' && (
+                <View style={styles.jobSelectedContainer}>
+                  <Text style={{
+                    borderWidth: 1,
+                    borderRadius: 16,
+                    color: "#1F2A47",
+                    padding: 5,
+                    fontFamily: 'Manrope-Bold',
+                    fontSize: 12,
+                    textAlign: 'center',
+                  }}>
+                    {selectedJobContext}
+                  </Text>
+                </View>
+              )}
+                </View>
                 <TouchableOpacity
                   style={[
                     styles.selectionContainer,
@@ -370,6 +383,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
 
     paddingTop: 35, // Adjust the padding to move the header down
+  },
+  jobSelectedContainer:{
+      marginTop:8,
   },
   logo: {
     width: 230,

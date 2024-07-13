@@ -26,10 +26,7 @@ const BidsFeed = ({job, bid}) => {
                 <Location size={16} color='#7E7E7E'/>
                 <Text style={styles.locationText}>{job.location}</Text>
             </View>
-            <View style={styles.itemDetailsContainer}> 
-                <DollarSquare size={16} color='#7E7E7E'/>
-                <Text style={styles.paymentText}>Wallet</Text>
-            </View>
+           
             </View>
             <View style={{flexDirection:'row', gap:50,}}>
             <Text style={styles.budgetText}>Budget: N{job.budget}</Text>

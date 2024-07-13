@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   Text,
@@ -24,6 +24,7 @@ import { Platform } from "react-native";
 import { Checkbox } from "react-native-paper";
 import CheckboxForm from "react-native-checkbox-form";
 import CustomCheckbox from "../components/CustomCheckBox";
+import { FirstTimeUserContext } from "../components/firstTimeUserContext";
 const LoginScreen = ({ navigation }) => {
   console.log("sugar");
   const [errors, setErrors] = useState({
@@ -45,7 +46,7 @@ const LoginScreen = ({ navigation }) => {
   const [isLogging, setIsLogging] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-
+  const { firstTimeUser, updateFirstTimeUser } = useContext(FirstTimeUserContext);
   useEffect(() => {
     validateForm();
   }, []);
@@ -97,12 +98,13 @@ const LoginScreen = ({ navigation }) => {
         const fullName = response.data.user.name
         const firstName = fullName.split(' ')[0]; 
 
+       updateFirstTimeUser(false)
         await AsyncStorage.setItem("logintoken", response.data.access_token);
         await AsyncStorage.setItem('firstName', firstName);
-        
         // Navigate to the next screen or perform any other action
         navigation.navigate("BottomTabs");
         console.log("Login successful");
+        console.log(firstTimeUser)
       } else {
         // Handle login failure
 

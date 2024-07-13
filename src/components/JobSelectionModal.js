@@ -1,5 +1,5 @@
 // JobSelectionModal.js
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useContext } from "react";
 import {
   View,
   Text,
@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "./Api";
+import { JobContext } from "./jobContext";
 import { SearchNormal1 } from "iconsax-react-native";
 
 const JobSelectionModal = ({ navigation }) => {
@@ -22,7 +23,7 @@ const JobSelectionModal = ({ navigation }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredServices, setFilteredServices] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const { setSelectedJobContext } = useContext(JobContext);
   const popularJobs = [
     { id: 30, name: "Grocery Shopping" },
     { id: 12, name: "Chef/Cook" },
@@ -80,7 +81,7 @@ const JobSelectionModal = ({ navigation }) => {
     try {
       // Store the selected job locally
       await AsyncStorage.setItem('selectedJobAsync', JSON.stringify(job));
-      // Proceed to registration or login
+      setSelectedJobContext(job.name)
       navigation.goBack();
     } catch (error) {
       console.error('Failed to store job selection:', error);

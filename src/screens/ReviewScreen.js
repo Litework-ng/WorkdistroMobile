@@ -6,10 +6,7 @@ import {DollarSquare, Location} from 'iconsax-react-native';
 import Button from '../components/Button';
 
 const ReviewScreen =({onPrev,success,StepIndicator,loading, step, navigation, jobDetails, onSubmit})=>{
-    const handleSuccessModalClose =()=>{
-        setSuccess(false);
-      navigation.navigate('Task');
-    }
+  
     return(
         <View  style={{backgroundColor:'#ffffff', padding:20,}}> 
            
