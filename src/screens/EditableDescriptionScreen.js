@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet,ScrollView } from 'react-native';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
@@ -6,18 +6,21 @@ import DropdownInput from '../components/DropDown';
 import UploadPhotoInput from '../components/UploadphotoInput';
 import BottomTabNavigator from '../components/BottomTabNavigator';
 import CustomBottomNavBar from '../components/CustomNavBar';
+import Button from "../components/Button";
 
-
-const EditableDescriptionForm = ({ onNext, StepIndicator, step, navigation, }) => {
-  const [subject, setSubject] = useState('');
-  const [description, setDescription] = useState('');
-  const [selectedValue, setSelectedValue] = useState(null);
+const EditableDescriptionForm = ({ onNext, StepIndicator, step, navigation, jobDetails, onChange}) => {
+ 
 
   const dropdownItems = [
     { label: 'Item Delivery', value: 'Item Delivery' },
     { label: 'Grocery Shopping', value: 'Grocery Shopping' },
     { label: 'Bill Payments', value: 'Bill Payments' },
   ];
+
+  useEffect(() => {
+   console.log(jobDetails)
+  }, []);
+
 
 
   const handleDropdownChange = (value) => {
@@ -34,50 +37,94 @@ const EditableDescriptionForm = ({ onNext, StepIndicator, step, navigation, }) =
   const maxLength = 500;
   const remainingCharacters = maxLength - text.length;
 
+  const [descriptionErr, setDescriptionErr] = useState(false);
 
   return (
-    <ScrollView style={{backgroundColor:'#ffffff'}}>
-     <View style={styles.headerContainer}>
-        <TouchableOpacity  onPress={() => navigation.goBack()}>
-      <FontAwesomeIcon icon={faChevronLeft} size={24}/>
+    <ScrollView style={{ backgroundColor: "#ffffff", padding: 20 }}>
+      <View style={styles.headerContainer}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <FontAwesomeIcon icon={faChevronLeft} size={24} />
         </TouchableOpacity>
-      <Text style={styles.headerText}>Description</Text>
+        <Text style={styles.headerText}>Description</Text>
       </View>
 
       {/* Dropdown input for subject */}
       <StepIndicator step={step} />
       <View>
         <Text style={styles.dropDownLabel}>Subject</Text>
-       <DropdownInput
-        
-        items={dropdownItems}
-        onValueChange={handleDropdownChange}
-      />
+        <TextInput
+          style={styles.subjectInput}
+          value={jobDetails.serviceName}
+          editable={false}
+        />
       </View>
 
       {/* Multiline text input for description */}
       <View>
-        <Text style={styles.descriptionInputLabel}>Description</Text>
+        <Text style={[styles.descriptionInputLabel]}>Description</Text>
+        {descriptionErr && (
+          <Text
+            style={{
+              color: "#C11414",
+            }}
+          >
+            Please,You need to give a description
+          </Text>
+        )}
         <TextInput
           multiline
-          onChangeText={(inputText) => setText(inputText)}
-          style={styles.descriptionInput}
-          placeholder='Please give a full description of the task'
-          value={text}
+          style={[
+            styles.descriptionInput,
+            {
+              width: "100%",
+              // backgroundColor: "red",
+              borderRadius: 8,
+              color:'#000',
+            },
+          ]}
+          placeholder="Please give a full description of the task"
+          onChangeText={(text) => {
+            onChange("description", text);
+          }}
+          value={jobDetails.description}
           maxLength={maxLength}
-          editable={true}
         />
-        
-      <Text style={styles.characters}>{`${text.length}/500`}</Text>
+
+        <Text
+          style={[
+            styles.characters,
+            {
+              // marginBottom: 20,
+            },
+            {
+              color:
+                jobDetails.description.length < 200
+                  ? "grey"
+                  : jobDetails.description.length < 300
+                  ? "green"
+                  : jobDetails.description.length < 480
+                  ? "blue"
+                  : "C11414",
+            },
+          ]}
+        >{`${jobDetails.description.length}/500`}</Text>
       </View>
 
       {/* Upload photo input */}
-      <UploadPhotoInput label='Upload photo'/> 
+      <UploadPhotoInput label="Upload photo" />
 
-      <TouchableOpacity onPress={onNext} style={styles.nextButton}>
-        <Text style={styles.nextButtonText}>Next</Text>
-      </TouchableOpacity>
-      <CustomBottomNavBar navigation={navigation}/>
+      <Button
+        text="Next"
+        onPress={() => {
+          setDescriptionErr(false);
+          if (jobDetails.description.trim() == "") {
+            setDescriptionErr(true);
+            return;
+          }
+          onNext();
+        }}
+      />
+      
     </ScrollView>
   );
 };
@@ -125,6 +172,18 @@ const styles = StyleSheet.create({
         color:'#B9B9B9',
         fontSize:14,
         marginBottom:40,
+    },
+    subjectInput: {
+      fontSize: 14,
+      fontWeight: "400",
+      paddingHorizontal: 10,
+      paddingVertical: 10,
+      borderWidth: 0.5,
+      borderColor: "#6B6B6B",
+      borderRadius: 8,
+      color: "black",
+      paddingRight: 30,
+      marginBottom: 20,
     },
 
     nextButton:{

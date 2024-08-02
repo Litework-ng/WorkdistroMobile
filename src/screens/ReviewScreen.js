@@ -4,6 +4,7 @@ import { faChevronLeft, faDollarSign, faLocationDot ,} from '@fortawesome/free-s
 import { FontAwesomeIcon,  } from '@fortawesome/react-native-fontawesome';
 import {DollarSquare, Location} from 'iconsax-react-native';
 import Button from '../components/Button';
+import LoadingOverlay from '../components/Loading';
 
 const ReviewScreen =({onPrev,success,StepIndicator,loading, step, navigation, jobDetails, onSubmit})=>{
   
@@ -31,14 +32,9 @@ const ReviewScreen =({onPrev,success,StepIndicator,loading, step, navigation, jo
 
       </View>
       <Text style={styles.budgetText}>Budget: N{jobDetails.budget}</Text>
-      <Modal transparent={true} visible={loading} style={styles.modalStyles}>
-        <View style={styles.modalContainer}>
-          <ActivityIndicator size="large" color='#1F2A47' />
-          <Text>Loading...</Text>
-        </View>
-      </Modal>
+     <LoadingOverlay visible={loading}/>
       
-      {/* Success Modal */}
+   
       
       
                   <TouchableOpacity onPress={onSubmit} style={styles.postButton}>

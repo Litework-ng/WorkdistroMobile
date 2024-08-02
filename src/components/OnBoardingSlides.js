@@ -58,7 +58,7 @@ const OnboardingSlides = ({ navigation, route }) => {
   };
 
   const { userSelection, setSelection } = useUserContext();
- 
+  const isButtonDisabled = !userSelection || (userSelection === 'becomeWorker' && !selectedJobContext);
 
  
 
@@ -151,11 +151,11 @@ const OnboardingSlides = ({ navigation, route }) => {
             <TouchableOpacity
               style={[
                 styles.getStartedButton,
-                !userSelection && styles.disabledButton,
+                isButtonDisabled && styles.disabledButton,
                
               ]}
               onPress={() => handleGetStarted(userSelection)}
-              disabled={!userSelection}
+              disabled={isButtonDisabled}
             >
               <Text style={styles.getStartedButtonText}>Get Started</Text>
             </TouchableOpacity>

@@ -25,8 +25,11 @@ import { Checkbox } from "react-native-paper";
 import CheckboxForm from "react-native-checkbox-form";
 import CustomCheckbox from "../components/CustomCheckBox";
 import { FirstTimeUserContext } from "../components/firstTimeUserContext";
+import { UserContext } from "../components/userAuthContext";
+import { AuthContext } from "../components/userAuthContext";
 const LoginScreen = ({ navigation }) => {
-  console.log("sugar");
+  
+ 
   const [errors, setErrors] = useState({
     email: "",
     password: "",
@@ -39,7 +42,7 @@ const LoginScreen = ({ navigation }) => {
       .min(6, "Password must be at least 6 characters")
       .required("Password is required"),
   });
-
+  const { login } = useContext(AuthContext);
   const [isFormValid, setIsFormValid] = useState(false);
   const [isFormTouched, setIsFormTouched] = useState(false);
   const [termsChecked, setTermsChecked] = useState(false);
@@ -84,6 +87,7 @@ const LoginScreen = ({ navigation }) => {
 
   const handleLogin = async (values, actions) => {
     await validationSchema.validate(values, { abortEarly: false });
+    
     try {
       setIsLogging(true);
       setErrorMessage("");
@@ -101,6 +105,8 @@ const LoginScreen = ({ navigation }) => {
        updateFirstTimeUser(false)
         await AsyncStorage.setItem("logintoken", response.data.access_token);
         await AsyncStorage.setItem('firstName', firstName);
+
+        login();
         // Navigate to the next screen or perform any other action
         navigation.navigate("BottomTabs");
         console.log("Login successful");

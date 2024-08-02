@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, ScrollView, TouchableOpacity, Image, Modal } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faChevronRight,
@@ -23,6 +23,11 @@ import {
   Messages2,
   User,
 } from "iconsax-react-native";
+import * as ImagePicker from 'expo-image-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from '../components/Api';
+import { useToast } from "../components/ToastProvider";
+
 const MenuItems = ({ text, saxIcon, onPress }) => {
   return (
     <TouchableOpacity
@@ -44,6 +49,86 @@ const MenuItems = ({ text, saxIcon, onPress }) => {
   );
 };
 const ProfileSScreen = ({ navigation }) => {
+  const [profilePhoto, setProfilePhoto] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const showToast = useToast();
+  useEffect(() => {
+    const loadProfilePhoto = async () => {
+      const savedProfilePhoto = await AsyncStorage.getItem('profilePhoto');
+      if (savedProfilePhoto) {
+        setProfilePhoto(savedProfilePhoto);
+      }
+    };
+    loadProfilePhoto();
+  }, []);
+
+  const handleUploadPhoto = async () => {
+    // Request permission to access the media library
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!permissionResult.granted) {
+      Alert.alert("Permission required", "You've refused to allow this app to access your photos!");
+      return;
+    }
+
+    // Let the user pick an image from their device
+    const pickerResult = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+      base64: false,
+    });
+
+    if (pickerResult.canceled) {
+      console.log('Image selection cancelled');
+      return;
+    }
+
+    const selectedImage = pickerResult.assets[0].uri;
+    console.log('Selected Image URI:', selectedImage);
+
+    if (!selectedImage) {
+      console.error('No image selected');
+      return;
+    }
+
+    try {
+      // Get loginToken from AsyncStorage
+      const loginToken = await AsyncStorage.getItem('logintoken');
+
+      if (!loginToken) {
+        Alert.alert("Error", "No login token found. Please log in again.");
+        return;
+      }
+
+      // Create a FormData object to send the image file
+      const formData = new FormData();
+      formData.append('image', {
+        uri: selectedImage,
+        name: 'profile.jpg',
+        type: 'image/jpeg',
+      });
+
+      // Upload the image to the backend
+      const response = await api.patch('user/', formData, {
+        headers: {
+          Authorization: `Bearer ${loginToken}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      console.log('Image upload response:', response.data);
+
+      // Save the uploaded image URI to AsyncStorage and update the state
+      await AsyncStorage.setItem('profilePhoto', selectedImage);
+      setProfilePhoto(selectedImage);
+      showToast( 'The task has been successfully canceled.');
+    } catch (error) {
+      console.error('Failed to upload the profile photo', error);
+      showToast( "Failed to upload the profile photo.");
+    }
+
+    setIsModalVisible(false);
+  };
   return (
     <ScrollView style={{ backgroundColor: "white", padding: 20 }}>
       <Text
@@ -66,8 +151,8 @@ const ProfileSScreen = ({ navigation }) => {
         }}
       >
         <Image
-          source={require("../../assets/images/profilepic3.png")}
-          style={{ width: 50, height: 50 }}
+          source={profilePhoto ? {uri:profilePhoto} : require("../../assets/images/user.png")}
+          style={{ width: 50, height: 50 , borderRadius:50,}}
         />
         <View>
           <Text

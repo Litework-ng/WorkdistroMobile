@@ -57,7 +57,7 @@ const MultiStepForm = ({ navigation, route }) => {
     serviceId: service.id,
     serviceName: service.name,
     description: "",
-    location: "",
+    location: "13 abu street Lagos Nigeria",
     paymentMethod: "wallet",
     budget: "",
   });

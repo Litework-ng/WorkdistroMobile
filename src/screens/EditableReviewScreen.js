@@ -2,16 +2,17 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, TextInput, KeyboardAvoidingView, ScrollView, } from "react-native";
 import { faChevronLeft, faDollarSign, faLocationDot ,} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import {DollarSquare, Location} from 'iconsax-react-native';
+import LoadingOverlay from '../components/Loading';
 
-
-const EditableReviewScreen =({onPrev,StepIndicator, step, navigation})=>{
+const EditableReviewScreen =({onPrev,StepIndicator, step, loading,navigation, jobDetails, onSubmit})=>{
     const handlePost =()=>{
         console.log('Job Posted');
         navigation.navigate('BottomTabs')
         
     }
     return(
-        <View> 
+        <View style={{backgroundColor:'#ffffff', padding:20,}}> 
            
            <View style={styles.headerContainer}>
         <TouchableOpacity  onPress={onPrev}>
@@ -22,23 +23,24 @@ const EditableReviewScreen =({onPrev,StepIndicator, step, navigation})=>{
       <StepIndicator step={step} />
       <Text style={styles.postText}>Your Job Post</Text>
       <Text style={styles.postInfoText}>This is a review of your job post. You can go back to edit.</Text>
-      <Text style={styles.postTitle}>Laundry</Text>
-      <Text style={styles.postDescription}>Lorem ipsum dolor sit amet consectetur. Commodo fames viverra est eget nec feugiat augue semper dolor.</Text>
+      <Text style={styles.postTitle}>{jobDetails.serviceName}</Text>
+      <Text style={styles.postDescription}>{jobDetails.description}</Text>
       <View style={styles.detailsContainer}>
         <View style={styles.itemDetailsContainer}>
-            <FontAwesomeIcon icon={faLocationDot} size={16} color='#7E7E7E'/>
-            <Text style={styles.locationText}>Ikorodu, Lagos</Text>
+            <Location size={16} color='#7E7E7E'/>
+            <Text style={styles.locationText}>{jobDetails.location}</Text>
         </View>
-        <View style={styles.itemDetailsContainer}> 
-            <FontAwesomeIcon icon={faDollarSign} size={16} color='#7E7E7E'/>
-            <Text style={styles.paymentText}>Wallet</Text>
-        </View>
+        
 
 
       </View>
-      <Text style={styles.budgetText}>Budget: N6,000</Text>
+      <Text style={styles.budgetText}>Budget: N{jobDetails.budget}</Text>
+     <LoadingOverlay visible={loading}/>
       
-                  <TouchableOpacity onPress={handlePost} style={styles.postButton}>
+   
+      
+      
+                  <TouchableOpacity onPress={onSubmit} style={styles.postButton}>
                     <Text style={styles.nextButtonText}>Post Job</Text>
                 </TouchableOpacity>
         </View>
@@ -123,7 +125,7 @@ const styles = StyleSheet.create({
     alignSelf:'center',
     width: 355,
     height: 50,
-    marginBottom:86,
+    marginBottom:96,
     marginTop:203,
     },
 

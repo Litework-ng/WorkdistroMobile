@@ -47,7 +47,7 @@ import JobSelectionModal from "./JobSelectionModal";
 import { FirstTimeUserContext } from "./firstTimeUserContext";
 
 const Stack = createNativeStackNavigator();
-const TIMEOUT_DURATION = 3000000;
+const TIMEOUT_DURATION = 300000;
 const MAX_RETRIES = 3;
 
 
@@ -71,7 +71,7 @@ const AppNavigator = () => {
           setInitialRoute('Onboarding');
           await AsyncStorage.setItem('firstTimeUser', 'false');
         } else {
-          setInitialRoute('Login');
+          setInitialRoute('Onboarding');
         }
       } catch (error) {
         console.error('Error checking first time user flag', error);
@@ -159,11 +159,11 @@ const AppNavigator = () => {
   }
 
   return (
-      <Stack.Navigator initialRouteName={initialRoute} screenOptions={{ headerShown: false }}>
+    <Stack.Navigator initialRouteName={initialRoute} screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Onboarding" component={OnboardingScreen} />
       <Stack.Screen name="OtpScreen" component={OtpScreen} />
       <Stack.Screen name="Login" component={NavigateLogin} />
-      <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-      <Stack.Screen name="BottomTabs" component={BottomTabsWrapper} />
+      <Stack.Screen name="BottomTabs" component={BottomTabsWrapper}  />
       <Stack.Screen name="OtpWorkerScreen" component={OtpVerificationWorkerScreen} />
       <Stack.Screen name="JobSelectionModal" component={JobSelectionModal} options={{ headerShown: false }} />
       <Stack.Screen name="SignUpClient" component={RegistrationScreenClient} />

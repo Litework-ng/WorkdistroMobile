@@ -4,7 +4,7 @@ import { faHome, faTasks, faWallet, faBell, faUser,faBriefcase } from '@fortawes
 import HomeScreen from '../screens/HomeScreenClient';
 import HomeScreenWorker from '../screens/HomeScreenWorker';
 import TaskScreen from '../screens/TaskScreen';
-import TaskScreenDemo from '../screens/TaskSCreenDemo';
+import TaskScreenDemo from '../screens/ClientTaskSreen';
 import WalletScreen from '../screens/WalletScreen';
 import NotificationsScreen from '../screens/NotificationsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
@@ -15,7 +15,7 @@ const Tab = createBottomTabNavigator();
 
 
 
-const ClientBottomTabs = ({component, onpress}) => {
+const ClientBottomTabs = ({component, onpress, navigation}) => {
   return (
     <Tab.Navigator
       screenOptions={{

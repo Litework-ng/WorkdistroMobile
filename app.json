@@ -7,7 +7,7 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/icon.png",
+      "image": "./assets/splashyimg.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -31,6 +31,11 @@
     },
     "plugins": [
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "5ce97d90-893c-465b-8970-1238b2f4b763"
+      }
+    }
   }
 }

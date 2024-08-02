@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faHome, faTasks, faWallet, faBell, faUser,faBriefcase } from '@fortawesome/free-solid-svg-icons';
 import HomeScreen from '../screens/HomeScreenClient';
 import TaskScreen from '../screens/TaskScreen';
-import TaskScreenDemo from '../screens/TaskSCreenDemo';
+import TaskScreenDemo from '../screens/ClientTaskSreen';
 import WalletScreen from '../screens/WalletScreen';
 import NotificationsScreen from '../screens/NotificationsScreen';
 import NotificationWorkerScreen from '../screens/Notificationworker';

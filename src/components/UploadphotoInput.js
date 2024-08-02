@@ -1,12 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import {
-  faEye,
-  faChevronLeft,
-  faFileArrowUp,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+
+
 import { DocumentUpload } from "iconsax-react-native";
 
 const UploadPhotoInput = ({ label }) => {

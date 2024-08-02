@@ -25,7 +25,7 @@ const InProgressTask = ({navigation, imageSource, }) => {
 
     return(
         <View style={{borderWidth:1,padding:15, borderRadius:4, marginTop:20, borderColor:'#E4E4E4',}}>
-        <View style={{flexDirection:'row',   }}>
+        <View style={{flexDirection:'row',  justifyContent:'space-between', }}>
         {imageSource ? (
         <TouchableOpacity onPress={handleImagePress}>
           <Image source={require('../../assets/images/services.png')}  style={{ width: 50, height: 50 }} />
@@ -95,11 +95,8 @@ const styles = StyleSheet.create({
         fontSize:14,
         fontWeight:'500',
     },
-    detailsContainer:{
-        flexDirection:'row',
-        gap:32,
-        marginTop:5,
-        padding:0,
+    descriptionText:{
+        fontSize:12,
         
     },
     itemDetailsContainer:{

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Platform } from "react-native";
 
 import {
@@ -23,9 +23,9 @@ import { Eye, EyeSlash } from "iconsax-react-native";
 import api from "../components/Api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomCheckbox from "../components/CustomCheckBox";
-
+import { AuthContext } from "../components/userAuthContext";
 const LoginWorkerScreen = ({ navigation }) => {
-  console.log("nail");
+  
   const [errors, setErrors] = useState({
     email: "",
     password: "",
@@ -38,7 +38,7 @@ const LoginWorkerScreen = ({ navigation }) => {
       .min(6, "Password must be at least 6 characters")
       .required("Password is required"),
   });
-
+  const { login } = useContext(AuthContext);
   const [isFormValid, setIsFormValid] = useState(false);
   const [isFormTouched, setIsFormTouched] = useState(false);
   const [termsChecked, setTermsChecked] = useState(false);
@@ -101,6 +101,7 @@ const LoginWorkerScreen = ({ navigation }) => {
         await AsyncStorage.setItem("logintoken", response.data.access_token);
         await AsyncStorage.setItem('firstName', firstName);
         await AsyncStorage.setItem('isFirstTimeUser', 'false');
+        login();
         // Navigate to the next screen or perform any other action
         navigation.navigate("BottomTabs");
         const checktest= await AsyncStorage.getItem('isFirstTimeUser');
